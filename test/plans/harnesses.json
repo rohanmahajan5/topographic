@@ -1,0 +1,35 @@
+{
+  "about": "Providers and inactive stubs on a real floor (this repository, which has Codex and Claude Code sessions). Sends nothing. --var claude=<the name of a running Claude Code column>",
+  "actions": [
+    {"wait": 3000},
+    {"assert": {"connected": true, "has": "column:*"}},
+    {"assert": {"has": "provider:*"}},
+    {"assert": {"has": "stub:*"}},
+    {"shot": "01-floor"},
+
+    {"log": "hover a provider mark above a full column"},
+    {"hover": "provider:$claude", "after": 500},
+    {"shot": "02-mark-hovered"},
+    {"assert": {"hover": "provider:$claude"}},
+
+    {"log": "hover an inactive stub: the chat's name and 'provider · age' in a white box"},
+    {"hover": "stub:*", "save": "s", "after": 500},
+    {"shot": "03-stub-hovered"},
+    {"assert": {"hover": "stub:$s.id"}},
+
+    {"log": "a column standing on a closed folder carries its path strip; clicking it opens the folders down to it"},
+    {"hover": "path:*", "save": "p", "after": 400},
+    {"shot": "04-path-strip"},
+    {"click": "path:$p.id", "after": 900},
+    {"shot": "05-path-opened"},
+    {"assert": {"lacks": "path:$p.id"}},
+
+    {"log": "focus the running Claude Code column, open its transcript (with the reply box)"},
+    {"key": "Escape", "after": 300},
+    {"click": "column:$claude", "after": 1500},
+    {"shot": "06-claude-focused"},
+    {"assert": {"focused": "$claude"}},
+    {"shot": "07-claude-transcript"},
+    {"assert": {"reply": "reply:$claude"}}
+  ]
+}

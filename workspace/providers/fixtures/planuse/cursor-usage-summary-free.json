@@ -1,0 +1,10 @@
+{
+  "billingCycleStart": "2026-11-05T00:00:00.000Z",
+  "billingCycleEnd": "2026-12-05T00:00:00.000Z",
+  "membershipType": "free",
+  "limitType": "user",
+  "individualUsage": {
+    "plan": {"enabled": true, "used": 0, "limit": 0, "remaining": 0},
+    "onDemand": {"enabled": false, "used": 0, "limit": null, "remaining": null}
+  }
+}

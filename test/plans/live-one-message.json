@@ -1,0 +1,27 @@
+{
+  "about": "The one live action: open an empty folder as the project (the page's URL carries ?cwd=<the folder>; typing a path in the bottom bar went with the bar, 2026-11-13), start one agent from its + plinth with a one-word request, watch its column appear and its context readout change when the token reading arrives. Costs one short Codex turn. Run with --var folder=/absolute/path/to/an/empty/folder (with a README.md in it).",
+  "actions": [
+    {"assert": {"connected": true}, "stop": true, "note": "no Codex, no live run"},
+    {"waitFor": "plus:.", "timeout": 15000},
+    {"assert": {"project": "$folder", "columns": 0}, "stop": true, "note": "guard: the floor is the empty test folder"},
+    {"shot": "01-empty-folder"},
+    {"click": "plus:.", "after": 400},
+    {"assert": {"reply": "reply:new:.", "replyText": ""}, "stop": true},
+    {"shot": "02-new-agent-box"},
+    {"type": "Reply with the single word ok and do nothing else."},
+    {"key": "Enter", "after": 0},
+    {"log": "sent"},
+    {"waitFor": "column:*", "timeout": 60000, "save": "c"},
+    {"shot": "03-column-appeared"},
+    {"assert": {"columns": 1, "focused": "$c.id"}},
+    {"log": "the readout above the column changes when Codex's token reading (thread/tokenUsage/updated) arrives: shots every 3 s"},
+    {"wait": 3000},
+    {"shot": "03b-after-3s"},
+    {"wait": 3000},
+    {"shot": "03c-after-6s"},
+    {"wait": 9000},
+    {"shot": "04-after-15s"},
+    {"assert": {"readings": true, "methods": true}, "note": "at least one token reading arrived; the methods seen and the readings are in run.json's final state"},
+    {"assert": {"columns": 1, "has": "column:*"}, "note": "not column:$c.id: Codex retitles a new session after its first message, and a column's name is its title"}
+  ]
+}

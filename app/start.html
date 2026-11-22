@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' file: 'unsafe-inline'; font-src 'self' file:; script-src 'unsafe-inline'">
+<link rel="stylesheet" href="../workspace/brand/wordmark.css">          <!-- the workspace beside the app: Resources/workspace in the app, agent-ide/workspace in a checkout -->
+<title>Topographic | Agent IDE</title>
+<style>
+  :root { --bg: #f3f1ec; --ink: #2c3440; --soft: #6b7380; --line: #dcd8cf; --teal: #2f7f7a; --ask: #b4542d; }
+  * { box-sizing: border-box; }
+  body { margin: 0; height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--ink);
+         font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; -webkit-user-select: none; }
+  main { width: min(520px, calc(100vw - 32px)); }
+  /* the title line, twice round 5's size (2026-11-22): word 20 -> 40 px, "Agent IDE" 15 -> 30 px,
+     divider 20 -> 40 px tall, the dotted logo 48 px tall (round 5's solid one: 20 px), gaps doubled */
+  h1 { font-size: 30px; font-weight: 600; margin: 0 0 16px; display: flex; align-items: baseline; gap: 18px; white-space: nowrap; }
+  h1 .wordmark { font-size: 40px; --mark-h: 48px; }          /* the wordmark (brand/wordmark.css), the logo to its left; the rest of the name quieter beside it */
+  /* the divider (2026-11-22: thinner and taller than before): a drawn 1 px hairline, taller than the capitals, in a soft colour */
+  h1 .sep { align-self: center; flex: none; width: 1px; height: 40px; background: #c3bdb1; }          /* flex: none: a flex line that runs full squeezed the empty 1 px span to 0, and the line vanished */
+  h1 > * { flex: none; }
+  h1 .rest { font-family: 'Topographic Wordmark', -apple-system, sans-serif; font-weight: 300; color: var(--soft); }          /* a lower weight (was 400; 2026-11-22) */
+  p { margin: 0 0 12px; color: var(--soft); }
+  .bar { height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; margin: 14px 0 10px; }
+  .bar i { display: block; height: 100%; width: 30%; background: var(--teal); animation: slide 1.4s ease-in-out infinite; }
+  @keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(340%); } }
+  pre { margin: 0; font: 11px/1.5 ui-monospace, Menlo, monospace; color: var(--soft); white-space: pre-wrap; word-break: break-word;
+        max-height: 40vh; overflow: auto; -webkit-user-select: text; }
+  .error pre { color: var(--ask); }
+  button { font: inherit; padding: 5px 12px; border-radius: 6px; border: 1px solid var(--line); background: #fffdf9; color: var(--ink); margin: 4px 6px 0 0; }
+  button.primary { background: var(--teal); border-color: var(--teal); color: #fff; }
+  [hidden] { display: none !important; }
+  /* the window has no title bar (app/src/logic.ts mainWindowOptions): this band at the top drags it, as a title bar would */
+  #band { position: fixed; left: 0; right: 0; top: 0; height: 48px; -webkit-app-region: drag; }          /* live.html TOPBAR.H (was 36) */
+</style>
+</head>
+<body>
+<div id="band"></div>
+<main id="m">
+  <h1 id="title" aria-label="Topographic | Agent IDE"><span class="wordmark"><svg xmlns="http://www.w3.org/2000/svg" class="mark" viewBox="0 0 879 817" aria-hidden="true" focusable="false"><defs><linearGradient id="tpg-mark" gradientUnits="userSpaceOnUse" x1="30" y1="30" x2="849" y2="787"><stop offset="0" stop-color="#ff2a1a"/><stop offset="0.5" stop-color="#ff7a00"/><stop offset="1" stop-color="#ffc800"/></linearGradient></defs><g fill="none" stroke="url(#tpg-mark)" stroke-linejoin="round"><path d="M30 765L82 767M30 765L30 713M667 787L615 785M667 787L667 735M667 787L714 767M667 130L667 182M667 130L615 128M667 130L714 109M30 107L82 109M30 107L30 159M30 107L78 87M849 710L801 730M849 710L849 658M849 52L849 104M849 52L801 72M849 52L797 50M212 30L264 32M212 30L165 50M147 769L199 771M264 773L316 775M381 777L433 779M498 781L550 783M667 666L667 614M667 545L667 493M667 424L667 372M667 303L667 251M550 126L498 124M433 122L381 120M316 117L264 116M199 113L147 112M30 229L30 281M30 350L30 402M30 471L30 523M30 592L30 644M849 588L849 536M849 467L849 415M849 346L849 294M849 225L849 173M732 48L680 46M615 44L563 42M498 40L446 38M381 36L329 34" stroke-width="26" stroke-linecap="butt"/><path d="M17 765a13 13 0 1 0 26 0a13 13 0 1 0 -26 0M654 787a13 13 0 1 0 26 0a13 13 0 1 0 -26 0M654 130a13 13 0 1 0 26 0a13 13 0 1 0 -26 0M17 107a13 13 0 1 0 26 0a13 13 0 1 0 -26 0M836 710a13 13 0 1 0 26 0a13 13 0 1 0 -26 0M836 52a13 13 0 1 0 26 0a13 13 0 1 0 -26 0M199 30a13 13 0 1 0 26 0a13 13 0 1 0 -26 0" fill="url(#tpg-mark)" stroke="none"/><path d="M192 328L313 446L192 555M371 574L510 578" stroke-width="60" stroke-linecap="round"/></g></svg><span class="topo">topo</span><span class="graphic">graphic</span></span><span class="sep" aria-hidden="true"></span><span class="rest">Agent IDE</span></h1>          <!-- the name as shown on the start screen (2026-11-21); 11-22: the logo (brand/logo-draft/mark-inline.svg), lowercase t, a drawn divider -->
+  <p id="text">Starting…</p>
+  <div class="bar" id="bar"><i></i></div>
+  <pre id="log"></pre>
+  <div id="actions" hidden>
+    <button class="primary" id="choose">Choose a project folder…</button>
+    <button id="retry">Try again</button>
+    <button id="repair">Set up Python again</button>
+  </div>
+</main>
+<script>
+  const api = window.agentIDEStart, $ = id => document.getElementById(id);
+  const lines = [];
+  function render(s) {
+    s = s || { kind: 'starting' };
+    $('m').className = s.kind === 'error' ? 'error' : '';
+    $('text').textContent = s.kind === 'error' ? (s.text || 'Topographic could not start.') + ' What happened:' : (s.text || 'Starting…');
+    $('bar').hidden = !(s.kind === 'starting' || s.kind === 'installing');
+    $('actions').hidden = !(s.kind === 'choose' || s.kind === 'error');
+    $('retry').hidden = $('repair').hidden = s.kind !== 'error';
+    $('choose').className = s.kind === 'choose' ? 'primary' : '';
+    if (s.kind === 'error') $('log').textContent = s.detail || '';
+    else if (s.kind !== 'installing') { lines.length = 0; $('log').textContent = ''; }
+  }
+  if (api) {
+    api.onScreen(render);
+    api.onProgress(l => { lines.push(l); if (lines.length > 8) lines.shift(); $('log').textContent = lines.join('\n'); });
+    api.screen().then(render);
+    $('choose').onclick = () => api.choose();
+    $('retry').onclick = () => api.retry();
+    $('repair').onclick = () => api.repair();
+    $('band').addEventListener('dblclick', () => { if (api.titleDoubleClick) api.titleDoubleClick(); });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "_about": "The uv binary the app carries (Astral's official GitHub release). The build downloads each archive and stops unless its SHA-256 matches the value here. The checksums were copied from the release's own .sha256 files on 2026-11-21. The app is built for Apple silicon (arm64) only. To move to a newer uv, change the version and the checksum together.",
+  "version": "0.13.7",
+  "url": "https://github.com/astral-sh/uv/releases/download/{version}/uv-{target}.tar.gz",
+  "targets": {
+    "arm64": {
+      "target": "aarch64-apple-darwin",
+      "sha256": "81b811b57e4624df7ed3aac148e0359100d9962f3d9dce00aec533dc2e086731"
+    }
+  }
+}

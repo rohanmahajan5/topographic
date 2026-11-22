@@ -1,0 +1,26 @@
+{
+  "about": "A Codex column's plan on whatever floor the server opens; sends nothing. Run with ?tick=1&minimap=inline. Where a Codex session on the floor has a plan (its update_plan calls, read from its rollout; with gpt-6-luna on codex-cli 0.167 they stand inside the JavaScript of its `exec` calls, providers/plans.py), its column carries the progress line ('2/3 · the current step', or '3/3 · done'); a click focuses it, and its checklist opens (at once while it runs, by ≡ once it has finished) with one row per step in the plan's order, its count matching the steps done; Esc closes it; on the mini-map no row carries both an attention icon and the progress ring. Where no Codex column has a plan, every step is skipped and logged. Measured first on a scratch project with one real gpt-6-luna run (2026-11-09: three steps, three updates).",
+  "url": "http://127.0.0.1:4491/?tick=1&minimap=inline",
+  "actions": [
+    {"assert": {"connected": true, "has": "column:*"}, "stop": true},
+    {"wait": 2500},
+    {"if": "progress:*", "provider": "codex", "then": [
+      {"log": "a Codex column with a plan: its progress line under its name"},
+      {"shot": "01-codex-plan-line"},
+      {"click": "column:*", "provider": "codex", "with": "progress:", "save": "c", "after": 1200, "reveal": true},
+      {"assert": {"focused": "$c.id", "has": "progress:$c.id", "progress.focused.id": "$c.id", "progress.focused.count": "*/*", "progress.focused.steps": true}, "stop": true},
+      {"log": "its checklist: open at once while it runs, by the ≡ beside its readout once it has finished"},
+      {"when": {"progress.focused.view": "chat"}, "then": [{"click": "timeline:$c.id", "after": 1000}]},
+      {"assert": {"progress.focused.view": "plan", "progress.focused.form": "list", "progress.focused.listOk": true}, "note": "one row per step, in the plan's order, as the harness recorded it"},
+      {"assert": {"progress.focused.listOver": false}, "note": "the open checklist stands over no other column, stub, mark, tab or readout, nor its own column's mark, nor any printed name (2026-11-09: it stood over a neighbour's grey stub); where nothing beside the column is clear it is lifted above the cap, as a name stack is"},
+      {"shot": "02-codex-checklist"},
+      {"key": "Escape", "after": 700},
+      {"log": "the mini-map: one key icon per row, the progress ring never beside an attention icon"},
+      {"click": "minimap", "after": 2000},
+      {"assert": {"minimap.open": true, "minimap.progress.ringWithAlert": 0}},
+      {"shot": "03-minimap"},
+      {"click": "minimap", "after": 800},
+      {"assert": {"minimap.open": false}}
+    ]}
+  ]
+}

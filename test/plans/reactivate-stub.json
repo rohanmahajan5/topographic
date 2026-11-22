@@ -1,0 +1,26 @@
+{
+  "about": "One Codex turn: an inactive Codex session in a scratch folder stands as a stub; sending it a one-word request grows it back to its full column. Run with --var folder=<a scratch folder whose only Codex session is idle> and the page URL's ?cwd= set to it.",
+  "actions": [
+    {"wait": 2500},
+    {"assert": {"connected": true, "project": "$folder", "has": "stub:*"}, "stop": true, "note": "guard: the scratch floor, with a stub on it"},
+    {"shot": "r1-stub"},
+    {"hover": "stub:*", "save": "s", "after": 500},
+    {"shot": "r2-stub-hovered"},
+    {"click": "stub:$s.id", "after": 1200},
+    {"assert": {"focused": "$s.id"}, "stop": true},
+    {"shot": "r3-stub-focused"},
+    {"type": "Reply with the single word ok", "note": "typed with the stub focused: its chat opens with it (the bottom bar is gone, 2026-11-13)"},
+    {"key": "Enter", "after": 200},
+    {"wait": 200},
+    {"shot": "r4-growing-200ms"},
+    {"wait": 600},
+    {"shot": "r5-grown"},
+    {"assert": {"lacks": "stub:$s.id"}},
+    {"wait": 15000},
+    {"shot": "r6-after-15s"},
+    {"click": "column:$s.id", "after": 600},
+    {"click": "label:$s.id:*", "after": 600},
+    {"click": "expand:$s.id", "after": 1000},
+    {"shot": "r7-chat-result"}
+  ]
+}

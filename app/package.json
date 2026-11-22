@@ -1,0 +1,83 @@
+{
+  "name": "topographic",
+  "productName": "Topographic",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A Mac app to start, watch and talk to coding agents (Codex, Claude Code and others) on one page",
+  "main": "dist/main.js",
+  "author": "Topographic contributors",
+  "scripts": {
+    "compile": "tsc -p tsconfig.json",
+    "stage": "python3 scripts/stage_workspace.py",
+    "fetch-uv": "node scripts/fetch-uv.mjs",
+    "prepare-app": "npm run compile && npm run stage && npm run fetch-uv",
+    "test": "npm run compile && node test/shell-logic.test.mjs",
+    "dev": "npm run prepare-app && electron .",
+    "build": "npm run prepare-app && electron-builder --mac --arm64",
+    "build:dir": "npm run prepare-app && electron-builder --mac dir --arm64"
+  },
+  "build": {
+    "appId": "io.github.rohanmahajan5.topographic",
+    "productName": "Topographic",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "start.html",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "build/workspace",
+        "to": "workspace"
+      },
+      {
+        "from": "build/uv/${arch}",
+        "to": "uv"
+      }
+    ],
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "arm64"
+          ]
+        }
+      ],
+      "category": "public.app-category.developer-tools",
+      "icon": "assets/icon.icns",
+      "identity": "-",
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "notarize": false
+    },
+    "dmg": {
+      "title": "Topographic"
+    },
+    "afterPack": "scripts/after-pack.cjs",
+    "publish": null,
+    "artifactName": "${productName}-${arch}.${ext}"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "electron": "^45.2.3",
+    "electron-builder": "^26.18.0",
+    "typescript": "^7.0.2"
+  },
+  "homepage": "https://github.com/rohanmahajan5/topographic",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rohanmahajan5/topographic.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rohanmahajan5/topographic/issues"
+  }
+}

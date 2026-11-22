@@ -1,0 +1,1120 @@
+{
+ "about": "Runs only on a made-up floor (?stress=40&replay=0&mix=busy&tick=1, whose first four requests are one of each kind: a question, an approval, a question with options, a request for more access): nothing is sent to any agent. The bottom text bar is gone; the time rail's icon shows and hides the rail; a card is folded away and brought back from its agent's icon; then every card is answered by its own buttons as it comes up (Decline, Answer in chat and typed there, Deny, an option, Allow once), each request resolving and its card going; a message typed to a made-up agent in its chat is accepted. Piece B: Decline opens a line for why (Enter on it empty sends the plain no), and after each answer the page goes to the next waiting question, whose transcript is closed again before the next card is answered.",
+ "actions": [
+  {
+   "waitFor": "card-fold:",
+   "timeout": 15000,
+   "save": "f"
+  },
+  {
+   "assert": {
+    "mock": "stress",
+    "connected": true,
+    "lacks": "line",
+    "cards.shown": true
+   },
+   "stop": true
+  },
+  {
+   "assert": {
+    "railShown": false,
+    "lacks": "rail:play"
+   }
+  },
+  {
+   "shot": "01-card"
+  },
+  {
+   "log": "the time rail's own icon"
+  },
+  {
+   "click": "rail-toggle"
+  },
+  {
+   "assert": {
+    "railShown": true,
+    "railOn": true,
+    "has": "rail:play"
+   }
+  },
+  {
+   "shot": "02-rail-on"
+  },
+  {
+   "click": "rail-toggle"
+  },
+  {
+   "assert": {
+    "railShown": false,
+    "railOn": false,
+    "lacks": "rail:play"
+   }
+  },
+  {
+   "log": "fold the card away and bring it back from its agent's icon"
+  },
+  {
+   "click": "card-fold:*",
+   "reveal": true,
+   "save": "f"
+  },
+  {
+   "assert": {
+    "cards.foldedColumns": "$f.column",
+    "!cards.column": "$f.column",
+    "cards.open": "$f.column"
+   }
+  },
+  {
+   "shot": "03-folded"
+  },
+  {
+   "click": "readout:$f.column",
+   "reveal": true
+  },
+  {
+   "assert": {
+    "reply": "reply:$f.column",
+    "!cards.foldedColumns": "$f.column",
+    "!cards.column": "$f.column"
+   },
+   "note": "the click brings the card back unfolded and opens the agent's transcript; no card is drawn for the agent whose transcript is open (its question stands at the transcript's top)"
+  },
+  {
+   "shot": "04-unfolded"
+  },
+  {
+   "key": "Escape",
+   "after": 500
+  },
+  {
+   "assert": {
+    "reply": null,
+    "cards.column": "$f.column",
+    "!cards.foldedColumns": "$f.column"
+   },
+   "note": "the transcript closed: the card is on the floor again"
+  },
+  {
+   "log": "answer every card by its own buttons as it comes up, oldest first: each kind once at least"
+  },
+  {
+   "if": "card-deny:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-deny:*",
+     "reveal": true,
+     "save": "d0"
+    },
+    {
+     "until": {
+      "!cards.open": "$d0.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$d0.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by deny: $d0.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "if": "card-option:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-option:*",
+     "reveal": true,
+     "save": "o0"
+    },
+    {
+     "until": {
+      "!cards.open": "$o0.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$o0.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by option: $o0.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "if": "card-type:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-type:*",
+     "reveal": true,
+     "save": "c0"
+    },
+    {
+     "assert": {
+      "reply": "reply:$c0.column",
+      "focused": "$c0.column"
+     }
+    },
+    {
+     "type": "Per tenant, please."
+    },
+    {
+     "key": "Enter"
+    },
+    {
+     "until": {
+      "!cards.open": "$c0.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$c0.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by typing: $c0.column"
+    },
+    {
+     "type": "Thanks, carry on."
+    },
+    {
+     "key": "Enter"
+    },
+    {
+     "wait": 1200
+    },
+    {
+     "assert": {
+      "toast": null,
+      "replyText": ""
+     }
+    },
+    {
+     "shot": "07-message-in-chat-c0"
+    },
+    {
+     "key": "Escape"
+    }
+   ]
+  },
+  {
+   "if": "card-allow:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-allow:*",
+     "reveal": true,
+     "save": "a0"
+    },
+    {
+     "until": {
+      "!cards.open": "$a0.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$a0.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by allow: $a0.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "if": "card-decline:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-decline:*",
+     "reveal": true,
+     "save": "d0"
+    },
+    {
+     "key": "Enter",
+     "note": "piece B: Decline opens one line for why; Enter on the empty line sends the plain no"
+    },
+    {
+     "until": {
+      "!cards.open": "$d0.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$d0.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by decline: $d0.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "shot": "05-round-0"
+  },
+  {
+   "if": "card-deny:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-deny:*",
+     "reveal": true,
+     "save": "d1"
+    },
+    {
+     "until": {
+      "!cards.open": "$d1.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$d1.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by deny: $d1.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "if": "card-option:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-option:*",
+     "reveal": true,
+     "save": "o1"
+    },
+    {
+     "until": {
+      "!cards.open": "$o1.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$o1.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by option: $o1.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "if": "card-type:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-type:*",
+     "reveal": true,
+     "save": "c1"
+    },
+    {
+     "assert": {
+      "reply": "reply:$c1.column",
+      "focused": "$c1.column"
+     }
+    },
+    {
+     "type": "Per tenant, please."
+    },
+    {
+     "key": "Enter"
+    },
+    {
+     "until": {
+      "!cards.open": "$c1.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$c1.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by typing: $c1.column"
+    },
+    {
+     "type": "Thanks, carry on."
+    },
+    {
+     "key": "Enter"
+    },
+    {
+     "wait": 1200
+    },
+    {
+     "assert": {
+      "toast": null,
+      "replyText": ""
+     }
+    },
+    {
+     "shot": "07-message-in-chat-c1"
+    },
+    {
+     "key": "Escape"
+    }
+   ]
+  },
+  {
+   "if": "card-decline:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-decline:*",
+     "reveal": true,
+     "save": "d1"
+    },
+    {
+     "key": "Enter",
+     "note": "piece B: Decline opens one line for why; Enter on the empty line sends the plain no"
+    },
+    {
+     "until": {
+      "!cards.open": "$d1.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$d1.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by decline: $d1.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "if": "card-allow:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-allow:*",
+     "reveal": true,
+     "save": "a1"
+    },
+    {
+     "until": {
+      "!cards.open": "$a1.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$a1.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by allow: $a1.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "shot": "05-round-1"
+  },
+  {
+   "if": "card-deny:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-deny:*",
+     "reveal": true,
+     "save": "d2"
+    },
+    {
+     "until": {
+      "!cards.open": "$d2.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$d2.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by deny: $d2.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "if": "card-option:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-option:*",
+     "reveal": true,
+     "save": "o2"
+    },
+    {
+     "until": {
+      "!cards.open": "$o2.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$o2.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by option: $o2.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "if": "card-type:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-type:*",
+     "reveal": true,
+     "save": "c2"
+    },
+    {
+     "assert": {
+      "reply": "reply:$c2.column",
+      "focused": "$c2.column"
+     }
+    },
+    {
+     "type": "Per tenant, please."
+    },
+    {
+     "key": "Enter"
+    },
+    {
+     "until": {
+      "!cards.open": "$c2.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$c2.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by typing: $c2.column"
+    },
+    {
+     "type": "Thanks, carry on."
+    },
+    {
+     "key": "Enter"
+    },
+    {
+     "wait": 1200
+    },
+    {
+     "assert": {
+      "toast": null,
+      "replyText": ""
+     }
+    },
+    {
+     "shot": "07-message-in-chat-c2"
+    },
+    {
+     "key": "Escape"
+    }
+   ]
+  },
+  {
+   "if": "card-allow:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-allow:*",
+     "reveal": true,
+     "save": "a2"
+    },
+    {
+     "until": {
+      "!cards.open": "$a2.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$a2.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by allow: $a2.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "if": "card-decline:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-decline:*",
+     "reveal": true,
+     "save": "d2"
+    },
+    {
+     "key": "Enter",
+     "note": "piece B: Decline opens one line for why; Enter on the empty line sends the plain no"
+    },
+    {
+     "until": {
+      "!cards.open": "$d2.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$d2.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by decline: $d2.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "shot": "05-round-2"
+  },
+  {
+   "if": "card-deny:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-deny:*",
+     "reveal": true,
+     "save": "d3"
+    },
+    {
+     "until": {
+      "!cards.open": "$d3.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$d3.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by deny: $d3.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "if": "card-option:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-option:*",
+     "reveal": true,
+     "save": "o3"
+    },
+    {
+     "until": {
+      "!cards.open": "$o3.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$o3.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by option: $o3.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "if": "card-type:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-type:*",
+     "reveal": true,
+     "save": "c3"
+    },
+    {
+     "assert": {
+      "reply": "reply:$c3.column",
+      "focused": "$c3.column"
+     }
+    },
+    {
+     "type": "Per tenant, please."
+    },
+    {
+     "key": "Enter"
+    },
+    {
+     "until": {
+      "!cards.open": "$c3.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$c3.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by typing: $c3.column"
+    },
+    {
+     "type": "Thanks, carry on."
+    },
+    {
+     "key": "Enter"
+    },
+    {
+     "wait": 1200
+    },
+    {
+     "assert": {
+      "toast": null,
+      "replyText": ""
+     }
+    },
+    {
+     "shot": "07-message-in-chat-c3"
+    },
+    {
+     "key": "Escape"
+    }
+   ]
+  },
+  {
+   "if": "card-decline:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-decline:*",
+     "reveal": true,
+     "save": "d3"
+    },
+    {
+     "key": "Enter",
+     "note": "piece B: Decline opens one line for why; Enter on the empty line sends the plain no"
+    },
+    {
+     "until": {
+      "!cards.open": "$d3.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$d3.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by decline: $d3.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "if": "card-allow:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-allow:*",
+     "reveal": true,
+     "save": "a3"
+    },
+    {
+     "until": {
+      "!cards.open": "$a3.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$a3.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by allow: $a3.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "shot": "05-round-3"
+  },
+  {
+   "if": "card-deny:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-deny:*",
+     "reveal": true,
+     "save": "d4"
+    },
+    {
+     "until": {
+      "!cards.open": "$d4.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$d4.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by deny: $d4.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "if": "card-option:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-option:*",
+     "reveal": true,
+     "save": "o4"
+    },
+    {
+     "until": {
+      "!cards.open": "$o4.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$o4.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by option: $o4.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "if": "card-type:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-type:*",
+     "reveal": true,
+     "save": "c4"
+    },
+    {
+     "assert": {
+      "reply": "reply:$c4.column",
+      "focused": "$c4.column"
+     }
+    },
+    {
+     "type": "Per tenant, please."
+    },
+    {
+     "key": "Enter"
+    },
+    {
+     "until": {
+      "!cards.open": "$c4.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$c4.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by typing: $c4.column"
+    },
+    {
+     "type": "Thanks, carry on."
+    },
+    {
+     "key": "Enter"
+    },
+    {
+     "wait": 1200
+    },
+    {
+     "assert": {
+      "toast": null,
+      "replyText": ""
+     }
+    },
+    {
+     "shot": "07-message-in-chat-c4"
+    },
+    {
+     "key": "Escape"
+    }
+   ]
+  },
+  {
+   "if": "card-allow:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-allow:*",
+     "reveal": true,
+     "save": "a4"
+    },
+    {
+     "until": {
+      "!cards.open": "$a4.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$a4.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by allow: $a4.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "if": "card-decline:*",
+   "reveal": true,
+   "then": [
+    {
+     "click": "card-decline:*",
+     "reveal": true,
+     "save": "d4"
+    },
+    {
+     "key": "Enter",
+     "note": "piece B: Decline opens one line for why; Enter on the empty line sends the plain no"
+    },
+    {
+     "until": {
+      "!cards.open": "$d4.column"
+     },
+     "timeout": 5000
+    },
+    {
+     "assert": {
+      "!cards.open": "$d4.column",
+      "toast": null
+     }
+    },
+    {
+     "log": "answered by decline: $d4.column"
+    },
+    {
+     "assert": {
+      "focused": null,
+      "transcript.open": false
+     },
+     "after": 400,
+     "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: no transcript opens and no agent is focused; the next waiting card shows where it stands"
+    }
+   ]
+  },
+  {
+   "shot": "05-round-4"
+  },
+  {
+   "assert": {
+    "cards.shown": null
+   }
+  },
+  {
+   "shot": "08-end"
+  }
+ ]
+}

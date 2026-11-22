@@ -1,0 +1,7 @@
+{
+ "_about": "Connector display names and marks: MCP server id (a claude.ai connector's id as it appears in mcp__<id>__<tool>, or a server name) -> name and the logo file in logos/ (without .svg). The three UUIDs are the mock scenario's own, invented (fixtures/junior-swe/FIXTURE.md). Name your own connectors in connectors.json in the app's data folder (beside its cache folder), which is read over this file.",
+ "dddd0000-0000-4000-8000-000000000001": {"name": "Google Drive", "logo": "google_drive"},
+ "3f1c2a9e-5b7d-4e2a-9c61-0d8e4b7a2f15": {"name": "Slack", "logo": "slack"},
+ "a7e4c0d2-81f3-4b6e-9d25-6c0b1e9f3a48": {"name": "Linear", "logo": "linear"},
+ "github": {"name": "GitHub", "logo": "github"}
+}

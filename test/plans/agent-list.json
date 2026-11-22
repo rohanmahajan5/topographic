@@ -1,0 +1,46 @@
+{
+  "about": "The agent list at the top left folds to a chip and opens again (2026-11-22: an expandable window that, folded, shows only the number of active agents). Its window's top edge sits on the top-right button row's top (2026-11-22: top-aligned with that row; --topbar-y, TOPBAR.Y in live.html), open or folded. On first run it is open (today's list) under one top line, 'N active' and a chevron; that line is a button (tree-toggle). A click folds the window to that line alone, in the same corner, meeting nothing; while an agent asks you, the chip carries the asking sign in orange. The choice survives a reload. Enter and Space on the focused button toggle it; Esc does what it did before (the list stays as it is). Opened again, a click on an agent's row opens that agent. Works on any floor with at least one agent; the waiting check runs only where an agent asks (live.html?stress=6&tick=1 has one).",
+  "actions": [
+    {"waitFor": "tree-toggle", "timeout": 20000},
+    {"assert": {"agentList.open": true, "agentList.saved": null, "agentList.text": "* active", "agentList.overlaps": false, "agentList.topAligned": true, "has": "tree-row:*", "agentList.mark": null}, "note": "first run: open, nothing saved, no mark while open", "stop": true},
+    {"shot": "01-expanded"},
+    {"assert": {"attention.keys.keys": false}, "note": "no page-wide keyboard shortcuts (2026-11-22: not needed yet)"},
+    {"when": {"!attention.head.n": 0}, "then": [
+      {"assert": {"attention.head.drawn.right": ""}, "note": "the 'N needs you' line draws no 'next ⌃.' at its right (2026-11-22)"},
+      {"click": "tree-need", "after": 900},
+      {"assert": {"agentList.open": true, "!focused": null}, "note": "a click on 'N needs you' still steps to the next that needs you"},
+      {"key": "Escape", "after": 400}
+    ]},
+    {"log": "fold it: the top line alone, in the same corner"},
+    {"click": "tree-toggle", "after": 400},
+    {"assert": {"agentList.open": false, "agentList.saved": "0", "agentList.topAligned": true, "agentList.overlaps": false, "lacks": "tree-row:*", "agentList.text": "* active", "agentList.focused": true}},
+    {"when": {"!agentList.asking": 0}, "then": [
+      {"assert": {"agentList.mark.ink": "orange", "agentList.mark.glyph": "*"}, "note": "an agent asks: the chip keeps the asking sign"}
+    ]},
+    {"when": {"agentList.asking": 0}, "then": [
+      {"assert": {"agentList.mark": null}, "note": "nobody asks: no mark"}
+    ]},
+    {"shot": "02-collapsed"},
+    {"log": "remembered across a reload"},
+    {"reload": true, "after": 300},
+    {"assert": {"agentList.open": false, "agentList.saved": "0", "lacks": "tree-row:*"}},
+    {"log": "keys: Enter opens, Space folds, Esc leaves the list as it is"},
+    {"click": "tree-toggle", "after": 300},
+    {"assert": {"agentList.open": true, "agentList.saved": "1", "agentList.focused": true, "has": "tree-row:*"}},
+    {"key": "Enter", "after": 300},
+    {"assert": {"agentList.open": false, "agentList.saved": "0"}},
+    {"key": "Space", "after": 300},
+    {"assert": {"agentList.open": true, "agentList.saved": "1", "has": "tree-row:*"}},
+    {"key": "Escape", "after": 300},
+    {"assert": {"agentList.open": true, "has": "tree-row:*"}, "note": "Esc does not fold the list"},
+    {"log": "an agent's row opens that agent, as before"},
+    {"click": "tree-row:*", "save": "r", "after": 900},
+    {"assert": {"focused": "$r.column*", "agentList.open": true}},
+    {"shot": "03-agent-opened"},
+    {"key": "Escape", "after": 400},
+    {"assert": {"agentList.open": true}},
+    {"click": "tree-toggle", "after": 400},
+    {"assert": {"agentList.open": false, "agentList.overlaps": false}},
+    {"shot": "04-collapsed-again"}
+  ]
+}

@@ -1,0 +1,10 @@
+{"event": {"type": "session.execution.started", "data": {"sessionID": "$SID"}}}
+{"event": {"type": "session.step.started", "data": {"sessionID": "$SID", "agent": "build", "model": {"id": "big-pickle", "providerID": "opencode", "variant": "default"}, "assistantMessageID": "msg_aide_scripted_2"}}}
+{"event": {"type": "session.tool.input.started", "data": {"sessionID": "$SID", "assistantMessageID": "msg_aide_scripted_2", "id": "call_edit_1", "name": "edit"}}}
+{"event": {"type": "session.tool.called", "data": {"sessionID": "$SID", "assistantMessageID": "msg_aide_scripted_2", "id": "call_edit_1", "input": {"filePath": "notes.txt", "oldString": "DELETE ME\n", "newString": ""}, "executed": false}}}
+{"event": {"type": "session.tool.success", "data": {"sessionID": "$SID", "assistantMessageID": "msg_aide_scripted_2", "id": "call_edit_1", "content": [{"type": "text", "text": "Edit applied successfully."}], "metadata": {}}}}
+{"event": {"type": "session.tool.input.started", "data": {"sessionID": "$SID", "assistantMessageID": "msg_aide_scripted_2", "id": "call_shell_2", "name": "shell"}}}
+{"event": {"type": "session.tool.called", "data": {"sessionID": "$SID", "assistantMessageID": "msg_aide_scripted_2", "id": "call_shell_2", "input": {"command": "false"}, "executed": false}}}
+{"event": {"type": "session.tool.success", "data": {"sessionID": "$SID", "assistantMessageID": "msg_aide_scripted_2", "id": "call_shell_2", "content": [{"type": "text", "text": ""}], "metadata": {"exit": 1}}}}
+{"event": {"type": "session.step.ended", "data": {"sessionID": "$SID", "assistantMessageID": "msg_aide_scripted_2", "finish": "stop", "cost": 0, "tokens": {"input": 50, "output": 5, "reasoning": 0, "cache": {"read": 0, "write": 0}}}}}
+{"event": {"type": "session.execution.succeeded", "data": {"sessionID": "$SID"}}}

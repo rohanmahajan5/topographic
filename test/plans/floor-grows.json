@@ -1,0 +1,52 @@
+{
+  "about": "Floor grows (2026-11-07): rewound or playing back, the floor shows the repository as it was. Runs against a server opened on ~/projects/habit-tracker (AGENT_IDE_PROJECT; one empty commit \"Start\", then a Codex lead with three subagents wrote index.html, styles.css, app.js, streak.mjs, streak.test.mjs and README.md and committed them as \"Build local habit tracker app\"), at 1440x900 with ?tick=1. Sends nothing to any agent and writes nothing. Live: all six pages and both knots. The rail's knob dragged to its start: no page on the floor, the six held back, only the Start knot, the floor's footprint unchanged. Played back at 5x: README.md rises first, then streak.mjs and streak.test.mjs, then app.js, then index.html and styles.css, each on its own spot with an entrance (not a jump), the floor's footprint never changing; the commit knot is still absent with every page there. The knob dragged to a moment before the commit (80% of the rail: inside the lead's long idle stretch): six pages, no commit knot; to a moment after it (97%): the commit knot. Back to now: as live. Those two drags name a share of the track (read just before each drag), not pixels: the track's length is what the strip leaves beside the readout's room, and that room grows as the run ages (a date once the day has changed, more hour digits), so 850 px and 180 px, measured on the run's own evening, overshot now on 2026-11-09 and let go past the track's end, at now. The rail's fractions hold while the run's folded time stays under ten minutes (the rail is linear then; the idle time since the run is one folded stretch, so it holds however old the run is); they need the habit-tracker history.",
+  "size": "1440x900",
+  "actions": [
+    {"if": "rail-toggle", "when": {"railShown": false}, "then": [{"click": "rail-toggle", "after": 300}], "note": "the time rail is hidden by default on a live floor (2026-11-13): its icon shows it"},
+    {"assert": {"connected": true, "has": "column:*"}, "stop": true},
+    {"waitFor": "trunk", "timeout": 15000},
+    {"until": {"rail": "live", "grows.nUnborn": 0}, "timeout": 10000},
+    {"assert": {"rail": "live", "grows.n": 6, "grows.nUnborn": 0, "grows.rising": false, "has": "page:README.md", "git.knots": ["Build local habit tracker app", "Start"], "floor.w": 325}, "stop": true},
+    {"shot": "01-live"},
+
+    {"log": "rewind to the start: the knob dragged past the rail's left end"},
+    {"drag": "rail:knob", "dx": -3000, "dy": 0, "after": 600},
+    {"assert": {"rail": "rewound", "grows.t": 0, "grows.n": 0, "grows.nUnborn": 6, "lacks": "page:*", "git.knots": ["Start"], "floor.w": 325}, "stop": true},
+    {"assert": {"lacks": "plot:*"}, "note": "no empty plots either: the reserved spots draw nothing"},
+    {"shot": "02-rewound-start"},
+
+    {"log": "play back at 5x (1x, 2x, 5x)"},
+    {"click": "rail:speed+", "after": 100},
+    {"click": "rail:speed+", "after": 100},
+    {"assert": {"speed": 5}},
+    {"click": "rail:play", "after": 100},
+    {"until": {"grows.pages": "README.md"}, "timeout": 20000},
+    {"assert": {"rail": "playing back", "grows.n": 1, "!grows.pages": "streak.mjs", "git.knots": ["Start"], "floor.w": 325}, "note": "README.md first (written at 25 s by a shell heredoc: its creation time on disk)"},
+    {"shot": "03-readme-rising"},
+    {"until": {"grows.pages": "streak.mjs"}, "timeout": 20000},
+    {"assert": {"grows.pages": "streak.test.mjs", "!grows.pages": "app.js"}},
+    {"until": {"grows.pages": "app.js"}, "timeout": 20000},
+    {"assert": {"!grows.pages": "index.html"}, "note": "app.js (first write 65.7 s) before index.html (75 s)"},
+    {"shot": "04-mid-replay"},
+    {"until": {"grows.nUnborn": 0}, "timeout": 20000},
+    {"assert": {"rail": "playing back", "grows.n": 6, "git.knots": ["Start"], "floor.w": 325}, "note": "every page there, the commit not made yet"},
+    {"wait": 900},
+    {"assert": {"grows.rising": false, "grows.entered": "index.html"}, "note": "each page rose in (an entrance on the wall clock), and the entrances are over"},
+    {"assert": {"grows.entered": "README.md"}},
+    {"assert": {"grows.entered": "app.js"}},
+    {"shot": "05-all-born"},
+
+    {"log": "the commit: the knob before it (80% of the rail) and after it (97%)"},
+    {"drag": "rail:knob", "dx": -3000, "dy": 0, "after": 400},
+    {"assert": {"rail": "rewound", "grows.t": 0}},
+    {"drag": "rail:knob", "to": "rail:track", "frac": 0.8, "after": 400},
+    {"assert": {"rail": "rewound", "grows.n": 6, "git.knots": ["Start"]}, "note": "before the commit"},
+    {"drag": "rail:knob", "to": "rail:track", "frac": 0.97, "after": 400},
+    {"assert": {"rail": "rewound", "grows.n": 6, "git.knots": ["Build local habit tracker app", "Start"]}, "note": "after the commit"},
+    {"shot": "06-after-commit"},
+
+    {"click": "rail:live", "after": 800},
+    {"assert": {"rail": "live", "grows.n": 6, "git.knots": ["Build local habit tracker app", "Start"], "floor.w": 325}},
+    {"shot": "07-back-live"}
+  ]
+}

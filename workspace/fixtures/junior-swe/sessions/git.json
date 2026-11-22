@@ -1,0 +1,39 @@
+{
+ "author": "Fixture Junior <junior@example.invalid>",
+ "commits": [
+  {
+   "at": "2026-11-03T11:02:00.000Z",
+   "branch": "main",
+   "message": "Receipts service: orders to receipts",
+   "files": "before",
+   "except": [
+    "src/receipts/api.py",
+    "tests/test_api.py",
+    "docs/notes"
+   ]
+  },
+  {
+   "at": "2026-11-04T16:02:00.000Z",
+   "branch": "main",
+   "message": "Add GET /receipts/<order id>",
+   "files": "before",
+   "except": [
+    "docs/notes"
+   ]
+  },
+  {
+   "at": "2026-11-05T14:29:21.000Z",
+   "branch": "fix/rcp-142-rounding",
+   "message": "RCP-142: round receipt totals once, half to even",
+   "files": "repo",
+   "only": [
+    "src",
+    "tests"
+   ]
+  }
+ ],
+ "end": "2026-11-05T14:42:00.000Z",
+ "untracked": [
+  "docs/notes"
+ ]
+}

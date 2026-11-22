@@ -1,0 +1,73 @@
+{
+  "about": "The mini-map on whatever floor the server opens; sends nothing. Run with ?minimap=inline (the same canvas the floating window holds, drawn into the page at the bottom right, so a headless test can see and click it). The map icon stands in the top-right row between the usage gauge and the rail's icon (usage gauge, map, rail icon, plug, folder: one top, one size, even gaps, none touching); while the mini-map is closed nothing of it runs. A click on the icon opens it: it draws the floor's real agents, a name in the list for every running or waiting one, each joined to its bar by a line, no two texts overlapping, no line through another agent's name; the finished agents of the last hour are listed below the divider (those with something for you first, then latest first, at most five, '+N more' for the rest) and none of them has a number on the floor. Attention, as on the main floor (one list for every surface, the engine's): an agent on the list shows the icon in its logo's place above its number and before its name in the list (a finished one: on top of its bar where there is room); the header says no count in the page (the agent tree's head says it), 'N need you' in the floating window; hovering an icon says what it is, clicking it does what the main floor's icon does, and 'N need you' steps to the next agent that needs you. Plan use: one tiny bar per harness with a plan reading at the header's right end, the same harnesses as the usage gauge; hovering one lists its windows with their reset times. Closing an open folder on the main floor turns it into a closed tile on the mini floor, and opening it again turns it back. A click on a running or waiting agent in the mini-map focuses that column on the main floor and flies the camera to it. Pointing at a finished name lights its bar (skipped when none finished in the last hour). The icon again closes it and its timer stops.",
+  "url": "http://127.0.0.1:4376/?tick=1&minimap=inline",
+  "actions": [
+    {"if": "rail-toggle", "when": {"railShown": false}, "then": [{"click": "rail-toggle", "after": 300}], "note": "the time rail is hidden by default on a live floor (2026-11-13): its icon shows it, for the steps that use it"},
+    {"assert": {"connected": true, "has": "column:*", "minimap.open": false}, "stop": true},
+    {"waitFor": "trunk", "timeout": 30000},
+    {"wait": 2000},
+    {"log": "the map icon in the top-right row, left of the bubble: usage gauge, map, bubble, plug, folder; one top, one size, even gaps, no two touching; closed, nothing of the mini-map runs"},
+    {"assert": {"buttons.order": "providers,usage,minimap,rail-toggle,connectors,pick-folder", "buttons.inRow": true, "buttons.overlap": false, "minimap.cost.timer": false, "minimap.cost.draws": 0}, "stop": true},
+    {"hover": "minimap", "after": 400},
+    {"assert": {"hover": "minimap"}},
+    {"shot": "01-icon-tip"},
+    {"sweep": "minimap"},
+    {"log": "the icon opens it: the real agents, a name for every running or waiting one with its line, no overlaps, no line through a name; finished in the last hour listed, at most five, no numbers on the floor"},
+    {"click": "minimap", "after": 2000},
+    {"assert": {"minimap.open": true, "minimap.host": "inline", "minimap.agents": true, "minimap.header": true, "minimap.unnamed": false, "minimap.lineless": false, "minimap.namesOk": true, "minimap.overlaps": 0, "minimap.crossNames": 0, "minimap.finished.ok": true, "minimap.finished.numbers": 0, "minimap.cost.timer": true, "has": "minimap-agent:*"}, "stop": true},
+    {"shot": "02-open"},
+    {"log": "attention and plan use: an agent with something open shows its icon in its logo's place above its number (running, waiting) and before its name in the list, never its logo; the floating window's header says 'N need you' (the engine's list's count, orange while any agent asks); drawn in the page it says none (the agent tree's head says it); one plan bar per harness with a plan reading, as the usage gauge"},
+    {"until": {"usage.loaded": true}, "timeout": 60000},
+    {"wait": 1000},
+    {"assert": {"usage.loaded": true, "minimap.attn.logoOk": true, "minimap.attn.namesOk": true, "minimap.attn.forYouOk": true, "minimap.attn.logoWithAlert": 0, "minimap.plansOk": true, "minimap.overlaps": 0, "minimap.progress.ringWithAlert": 0}, "note": "plan progress: one key icon per row, an attention icon in place of the ring"},
+    {"if": "minimap-plan:*", "then": [
+      {"hover": "minimap-plan:*", "save": "p", "after": 900},
+      {"assert": {"minimap.tipFor": "plan:$p.id", "minimap.tip": true}},
+      {"shot": "02a-hover-plan"}
+    ]},
+    {"if": "minimap-alert:*", "then": [
+      {"hover": "minimap-alert:*", "save": "x", "after": 900},
+      {"assert": {"minimap.tipFor": "alert:$x.id"}},
+      {"shot": "02b-hover-floor-icon"}
+    ]},
+    {"if": "minimap-name-alert:*", "then": [
+      {"hover": "minimap-name-alert:*", "save": "y", "after": 900},
+      {"assert": {"minimap.tipFor": "alert:$y.id"}},
+      {"shot": "02c-hover-name-icon"}
+    ]},
+    {"if": "minimap-foryou", "then": [
+      {"hover": "minimap-foryou", "after": 900},
+      {"assert": {"minimap.tipFor": "foryou"}},
+      {"click": "minimap-foryou", "after": 800},
+      {"assert": {"attention.steps.steps.0.how": "click", "focused": true}, "note": "floating window only: 'N need you' steps to the next agent that needs you"},
+      {"shot": "02d-foryou-step"}
+    ]},
+    {"if": "minimap-alert:*", "then": [
+      {"click": "minimap-alert:*", "save": "z", "after": 2500},
+      {"assert": {"focused": "$z.session", "reply": "reply:$z.session", "rail": "live", "minimap.flew": "$z.session"}},
+      {"shot": "02e-clicked-floor-icon"},
+      {"key": "Escape", "after": 600}
+    ]},
+    {"log": "an open folder closed on the main floor becomes a closed tile on the mini floor; opened again, it is open there too"},
+    {"click": "strip:*", "save": "f", "after": 1500},
+    {"assert": {"minimap.closedTiles": "$f.id", "!minimap.openFolders": "$f.id", "minimap.overlaps": 0, "minimap.namesOk": true}},
+    {"shot": "03-folder-closed"},
+    {"click": "tile:$f.id", "reveal": true, "after": 1500},
+    {"assert": {"minimap.openFolders": "$f.id", "!minimap.closedTiles": "$f.id", "minimap.overlaps": 0, "minimap.namesOk": true}},
+    {"shot": "04-folder-open"},
+    {"log": "a click on a running or waiting agent in the mini-map flies the main floor to its column"},
+    {"click": "minimap-agent:*", "save": "m", "after": 2500},
+    {"assert": {"focused": "$m.id", "minimap.flew": "$m.id", "minimap.focusInView": true, "moving": false}},
+    {"shot": "05-flew"},
+    {"log": "pointing at a finished name lights its bar and draws its line (only when some finished in the last hour)"},
+    {"if": "minimap-finished:*", "then": [
+      {"hover": "minimap-finished:*", "save": "g", "after": 1200},
+      {"assert": {"minimap.pointing": "$g.id"}},
+      {"shot": "06-pointing-finished"}
+    ]},
+    {"log": "the icon again closes it; its timer stops"},
+    {"click": "minimap", "after": 1200},
+    {"assert": {"minimap.open": false, "minimap.cost.timer": false, "lacks": "minimap-agent:*"}},
+    {"shot": "07-closed"}
+  ]
+}

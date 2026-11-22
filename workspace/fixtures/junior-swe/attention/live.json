@@ -1,0 +1,94 @@
+{
+ "_": "what the app-server would hold for these threads if this server drove them: their running turns and the requests waiting on you (the shapes of test_server.py's stand-ins, not of a recorded stream); piece B (2026-11-18): 9101 offers Codex's proposed rule (pip install) as Codex 0.167 does for commands, and 9103 carries its change as the server attaches it from the stream's fileChange item (the request itself has none)",
+ "active": {
+  "019a5c40-a001-7a01-8c01-3e5b7d9f1a01": "019a5c40-a001-7b00-9000-000000000001",
+  "019a5c40-b002-7a02-8c02-3e5b7d9f1a02": "019a5c40-b002-7b00-9000-000000000001",
+  "019a5c40-c003-7a03-8c03-3e5b7d9f1a03": "019a5c40-c003-7b00-9000-000000000001",
+  "019a5c40-d004-7a04-8c04-3e5b7d9f1a04": "019a5c40-d004-7b00-9000-000000000003",
+  "019a5c40-e005-7a07-8c07-3e5b7d9f1a07": "019a5c40-e005-7b00-9000-000000000001"
+ },
+ "requests": [
+  {
+   "id": 9101,
+   "method": "item/commandExecution/requestApproval",
+   "params": {
+    "threadId": "019a5c40-a001-7a01-8c01-3e5b7d9f1a01",
+    "turnId": "019a5c40-a001-7b00-9000-000000000001",
+    "itemId": "exec-a001-9",
+    "startedAtMs": 1793889640000,
+    "kind": "command",
+    "command": "/bin/zsh -lc \"pip install -e '.[test]'\"",
+    "cwd": "{{PROJECT}}",
+    "reason": "Install the test dependencies (network access to pypi.org)",
+    "availableDecisions": [
+     "accept",
+     {
+      "acceptWithExecpolicyAmendment": {
+       "execpolicy_amendment": [
+        "pip",
+        "install"
+       ]
+      }
+     },
+     "decline",
+     "cancel"
+    ],
+    "proposedExecpolicyAmendment": [
+     "pip",
+     "install"
+    ]
+   }
+  },
+  {
+   "id": 9102,
+   "method": "item/tool/requestUserInput",
+   "params": {
+    "threadId": "019a5c40-b002-7a02-8c02-3e5b7d9f1a02",
+    "turnId": "019a5c40-b002-7b00-9000-000000000001",
+    "itemId": "ask-b002-1",
+    "isBlocking": true,
+    "autoResolutionMs": null,
+    "questions": [
+     {
+      "id": "release",
+      "header": "Release",
+      "question": "Which release should the RCP-142 entry go under?",
+      "isOther": true,
+      "isSecret": false,
+      "options": [
+       {
+        "label": "1.4.2 (next patch)",
+        "description": "the rounding fix alone"
+       },
+       {
+        "label": "1.5.0",
+        "description": "with the currency work"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": 9103,
+   "method": "item/fileChange/requestApproval",
+   "params": {
+    "threadId": "019a5c40-d004-7a04-8c04-3e5b7d9f1a04",
+    "turnId": "019a5c40-d004-7b00-9000-000000000003",
+    "itemId": "patch-d004-1",
+    "startedAtMs": 1793889650000,
+    "reason": "Quantize after conversion in convert()",
+    "grantRoot": null,
+    "changes": [
+     {
+      "path": "src/receipts/currency.py",
+      "kind": {
+       "type": "update"
+      },
+      "diff": "@@ -1,11 +1,16 @@\n \"\"\"Currency conversion with the day's rates (fixed here; the real service reads them each morning).\"\"\"\n-from decimal import Decimal\n+from decimal import Decimal, ROUND_HALF_EVEN\n \n RATES = {(\"EUR\", \"GBP\"): Decimal(\"0.8417\"), (\"GBP\", \"EUR\"): Decimal(\"1.1881\"), (\"EUR\", \"USD\"): Decimal(\"1.0732\")}\n+CENT = Decimal(\"0.01\")\n \n \n def convert(amount, src, dst):\n-    \"\"\"amount in src as dst, unrounded: callers round once, at the end (spec 3.2).\"\"\"\n+    \"\"\"amount in src as dst, quantized to the cent with banker's rounding (RCP-142: a line total and the receipt\n+    total were rounded at different steps, so they could differ by a cent).\"\"\"\n     if src == dst:\n-        return amount\n-    return amount * RATES[(src, dst)]\n+        return amount.quantize(CENT, rounding=ROUND_HALF_EVEN)\n+    converted = amount * RATES[(src, dst)]\n+    return converted.quantize(CENT, rounding=ROUND_HALF_EVEN)"
+     }
+    ]
+   }
+  }
+ ]
+}

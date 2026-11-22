@@ -1,0 +1,15 @@
+# The workspace server's Python and packages, for uv (https://docs.astral.sh/uv/). The desktop app runs the server with
+# `uv run --frozen` against uv.lock, so a person needs no Python of their own. server.py itself uses only the standard
+# library and still runs the old way (`python3 server.py`, Python 3.11+); claude-agent-sdk is what claude_worker.py
+# (Claude Code sessions driven from the page) needs, at the version claude_bridge_setup.sh pins.
+[project]
+name = "agent-ide-workspace"
+version = "0.1.0"
+description = "The Agent IDE workspace server: starts, watches and talks to Codex and Claude Code agents from one page"
+requires-python = "==3.12.*"
+dependencies = [
+    "claude-agent-sdk==0.2.178",
+]
+
+[tool.uv]
+package = false

@@ -1,0 +1,38 @@
+[
+ {
+  "id": "019a5c3e-7d20-7b41-9f0c-5e2a8d1c6b47",
+  "rollout": "sessions/rollout-2026-11-05T14-27-00-019a5c3e-7d20-7b41-9f0c-5e2a8d1c6b47.jsonl",
+  "created_at": "2026-11-05T14:27:00.000Z",
+  "updated_at": "2026-11-05T14:31:52.000Z",
+  "source": "cli",
+  "originator": "codex_cli_rs",
+  "model_provider": "openai",
+  "model": "gpt-6-luna",
+  "cwd": "{{PROJECT}}",
+  "title": "Open the PR for RCP-142",
+  "first_user_message": "Commit the RCP-142 rounding fix (src/ and tests/ only, leave docs/notes out) on a branch fix/rcp-142-rounding, push it, and open a pull request against main using the repo's PR template.",
+  "preview": "Commit the RCP-142 rounding fix (src/ and tests/ only, leave docs/notes out) on a branch fix/rcp-142-rounding, push it, ",
+  "sandbox_policy": "workspace-write",
+  "approval_mode": "on-request",
+  "thread_source": "user",
+  "git_branch": "fix/rcp-142-rounding"
+ },
+ {
+  "id": "019a5c3d-f100-7c11-9a21-4b3c2d1e0f60",
+  "rollout": "sessions/rollout-2026-11-05T14-18-00-019a5c3d-f100-7c11-9a21-4b3c2d1e0f60.jsonl",
+  "created_at": "2026-11-05T14:18:00.000Z",
+  "updated_at": "2026-11-05T14:21:52.000Z",
+  "source": "cli",
+  "originator": "codex_cli_rs",
+  "model_provider": "openai",
+  "model": "gpt-6-luna",
+  "cwd": "{{PROJECT}}",
+  "title": "Second opinion on the RCP-142 fix",
+  "first_user_message": "Second opinion on RCP-142: make the rounding fix yourself from the spec (round once, after conversion, half to even) and write a short note.",
+  "preview": "Second opinion on RCP-142: make the rounding fix yourself from the spec (round once, after conversion, half to even) and",
+  "sandbox_policy": "workspace-write",
+  "approval_mode": "on-request",
+  "thread_source": "user",
+  "git_branch": "main"
+ }
+]

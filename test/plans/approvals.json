@@ -1,0 +1,138 @@
+{
+ "about": "One request end to end with real keys: open an empty folder as the project (the page's URL carries ?cwd=<the folder>: typing a path in the bottom bar went with the bar, 2026-11-13), start one agent from its + plinth with a prompt that makes Codex ask, wait for the column's ask flag (ask:<column>), open its chat window, answer in its chat (typed in the chat window's box: y, n or an option number; the card's own buttons are the other way, tested on the made-up floor by answer-on-card.json), wait for the outcome on the column (tick:<column>:<i> for approvals), watch the agent continue. Costs one Codex turn. Run with --var folder=/absolute/empty/folder (with a README.md) --var prompt='...' --var answer=y|n|<option number> --var after='tick:*' (approvals) or 'column:*' (a question leaves no tick). Prompts used 2026-11-05: a command ('Run `curl -sI https://example.com` and tell me the status line', answer y); a file change outside every writable root ('Use your file editing tool (apply_patch), not a shell command, to create the file <home>/appr-test-note.txt containing the word hi. If it is refused, stop and say so.', answer n; /tmp is writable under workspace-write, so a /tmp path does not ask); a question ('Before doing anything, ask me which of two names I prefer, A or B, using your question tool, then stop.', answer 2), which needs the server's app-server started with -c features.default_mode_request_user_input=true (Codex offers the question tool only in Plan mode otherwise).",
+ "actions": [
+  {
+   "assert": {
+    "connected": true
+   },
+   "stop": true,
+   "note": "no Codex, no live run"
+  },
+  {
+   "waitFor": "plus:.",
+   "timeout": 15000
+  },
+  {
+   "assert": {
+    "project": "$folder",
+    "columns": 0,
+    "ask": null
+   },
+   "stop": true,
+   "note": "guard: the floor is the empty test folder, nothing is asking"
+  },
+  {
+   "shot": "01-empty-folder"
+  },
+  {
+   "click": "plus:.",
+   "after": 400
+  },
+  {
+   "assert": {
+    "reply": "reply:new:."
+   },
+   "stop": true
+  },
+  {
+   "type": "$prompt"
+  },
+  {
+   "key": "Enter",
+   "after": 0
+  },
+  {
+   "log": "sent"
+  },
+  {
+   "waitFor": "column:*",
+   "timeout": 60000,
+   "save": "c"
+  },
+  {
+   "waitFor": "ask:*",
+   "timeout": 240000,
+   "save": "q"
+  },
+  {
+   "log": "the request arrived: the column's flag is up"
+  },
+  {
+   "wait": 800
+  },
+  {
+   "shot": "02-asking"
+  },
+  {
+   "click": "label:*",
+   "after": 300
+  },
+  {
+   "assert": {
+    "reply": "reply:*"
+   },
+   "note": "the asking column's transcript is open, the cursor in its reply box"
+  },
+  {
+   "shot": "02b-asking-transcript"
+  },
+  {
+   "assert": {
+    "ask": true,
+    "reply": "reply:*"
+   },
+   "stop": true,
+   "note": "a request is open and its transcript is open"
+  },
+  {
+   "click": "reply:*"
+  },
+  {
+   "type": "$answer"
+  },
+  {
+   "assert": {
+    "replyText": "$answer"
+   },
+   "stop": true
+  },
+  {
+   "shot": "03-answer-typed"
+  },
+  {
+   "key": "Enter",
+   "after": 300
+  },
+  {
+   "log": "answered"
+  },
+  {
+   "waitFor": "$after",
+   "timeout": 15000
+  },
+  {
+   "wait": 800
+  },
+  {
+   "shot": "04-answered"
+  },
+  {
+   "assert": {
+    "ask": null
+   },
+   "note": "the request is closed and nothing else is asking"
+  },
+  {
+   "wait": 20000
+  },
+  {
+   "shot": "05-after-20s"
+  },
+  {
+   "wait": 25000
+  },
+  {
+   "shot": "06-after-45s"
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+# build outputs and installed packages
+node_modules/
+node_modules
+app/dist/
+app/build/
+app/release*/
+test/out/
+# Python
+__pycache__/
+*.pyc
+.venv/
+workspace/.claude-bridge/
+workspace/.cache/
+workspace/fixtures/junior-swe/.run/
+workspace/fixtures/junior-swe/.run-*/
+# macOS
+.DS_Store

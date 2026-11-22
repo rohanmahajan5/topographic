@@ -1,0 +1,618 @@
+{
+ "about": "The attention items on the mock floor `AGENT_IDE_MOCK=attention` (the junior floor plus seven sessions with one of each kind, and a Claude Code session stopped on AskUserQuestion with a background subagent; see workspace/fixtures/junior-swe/FIXTURE.md), a freshly started server each run, since answering in the list uses up the mock's three open requests (they are resolved by the mock itself, never sent to an agent) and the mock's next events (`mock` steps: the person answering in Claude Code, the subagent reporting back, a second turn) happen once. Run at 1440x900 with ?tick=1&minimap=inline (the mini-map steps are skipped without it). One telling (map engine, plan D18): every surface reads the engine's one list, one entry per agent that needs you (it asks, its last turn failed, it finished and you have not looked, or it is silent); no icon stands over a column and no line above it: the agent's mark takes its logo's place (its floor label or the top of its stack), and the logo of every listed agent is hidden. The words (asks you, failed, finished, silent) are on its row in the list and on its edge mark's hover. A Claude Code session stopped on AskUserQuestion is a question waiting on you (its column, its mini-map row, the tree's head), answered in Claude Code, never from here, and gone once the transcript has the answer. A subagent's hand-back is no item: never in the tree's head count or the list, only a short pulse from the child to its parent, gone a few seconds later. The error mark (2026-11-09) means the agent's latest turn failed and you have not looked: a failure followed by work is none (the receipts agent's two, a resumed subagent's), a subagent's failure folded into its parent's row stands on the parent's column and a click on that column clears it (where the engine lists such a subagent on its own the mini-map steps use it; otherwise they are skipped). A click on the agent itself (its column or stub, its mini-map row, its edge mark, its row in the list) clears what only tells you something, once: a finished answer, an error, a quiet clock; the entry goes from the list, the edge, the tray's count and the mini-map's 'N for you', the column's logo comes back, and a reload does not bring it back; a question or an approval stays until answered. A click on its row in the list: back to now (the rail rewound first), the camera on the column, its chat open (an error's chat shows the failed turn in its own row). Edges: after a flight, the columns off screen show at the view's edge, and the one behind the chat window at the window's edge; hover words it, a click goes there. The tray: first in the top-right row, its badge the number of agents on the list (not requests), orange while any asks; its list one ordered list, the agents that ask first (by urgency, then the longest wait), the same count; a question and an approval answered in the list; a row click closes it and opens that chat; mark all read leaves only the agents that ask. The steps take the agents by name through the list's hit names (tray-row:<agent>:<condition>, condition asking, failed, finished or stalled); the old hover steps on icons over columns are gone with the icons. The finished mark (2026-11-09) means the agent has returned and you have not looked: an unread answer keeps its agent from going inactive (2026-11-10; plans/inactive.json), gone while it works again (the Claude app's registration busy, or a new message in its transcript) and back when that turn ends, one per column; a turn begun with the registration idle keeps the agent running in the mini-map (no flip to finished). A Claude Code session the Claude app holds shows a line above its chat's box and a 'send as copy' button; the send asks first; a copy is a column of its own named 'copy of …'. The page is loaded again between flights (the read marks live in the browser's local storage, so they stay).",
+ "size": "1440x900",
+ "actions": [
+  {"if": "rail-toggle", "when": {"railShown": false}, "then": [{"click": "rail-toggle", "after": 300}], "note": "the time rail is hidden by default on a live floor (2026-11-13): its icon shows it, for the steps that use it"},
+  {"until": {"attention.head.asking": 4}, "timeout": 15000, "note": "the Claude Code question comes with the state poll after the canvas read its transcript: four agents ask"},
+  {"when": {"panels.open": "providers"}, "then": [{"key": "Escape", "after": 300}], "note": "the mock has no provider ready, so the providers panel opens by itself on each load; a click outside a popup only closes it (2026-11-22), so it is closed first"},
+  {"assert": {"connected": true, "mock": "attention", "attention.head.asking": 4, "attention.pulses": []}, "stop": true, "note": "the tree's head counts agents, not requests: the four that ask you (two approvals, two questions); a hand-back is no entry (nothing pulses yet)"},
+  {
+   "log": "an answer you have not read keeps its agent active (2026-11-10: an agent goes inactive only once you have read it and not followed up, ten minutes after the read, or past 48 hours): the PR session answered over ten minutes before the mock's afternoon ended and the RCP-142 session a minute before; both stand as full columns with their finished marks (plans/inactive.json moves the clock through the rest of the rule)"
+  },
+  {"assert": {"!stubs": "Open the PR for RCP-142", "idle.Open the PR for RCP-142": "unread", "attention.logosOff": "Open the PR for RCP-142"}, "note": "its finished mark: it is on the engine's list (the mark stands in the column's logo's place)"},
+  {"assert": {"attention.logosOff": "RCP-142: receipt totals a cent off"}},
+  {"until": {"attention.head.n": true}, "timeout": 15000, "note": "something is on the engine's list (the tree's head counts agents)"},
+  {
+   "wait": 1500
+  },
+  {
+   "shot": "01-floor"
+  },
+  {"log": "one telling: every agent that needs you (it asks, failed, finished unread, or is silent) is on the engine's one list and shows its legend mark in its logo's place, no icon over the column and no line above it; nothing overlaps; the tree's head counts them, orange while any agent asks; no edge mark while every column is in view; no hand-back anywhere"},
+  {"assert": {"attention.head.colour": "orange", "attention.head.asking": 4, "attention.overlaps": 0, "attention.said": null, "attention.edgeOff": 0, "attention.edgeBehind": 0, "attention.pulses": [], "attention.logosOff": "RCP-142: receipt totals a cent off", "!attention.logosDrawn": "RCP-142: receipt totals a cent off", "buttons.order": "providers,usage,minimap,rail-toggle,connectors,pick-folder", "buttons.inRow": true, "buttons.overlap": false}, "stop": true},
+  {"log": "a Claude Code session stopped on AskUserQuestion: an agent asking you, its logo's place taken by the mark"},
+  {"assert": {"attention.logosOff": "Plan the RCP-142 release"}, "note": "its words before the question are not an unread answer: the list below holds it as asking only, never as finished"},
+  {"assert": {"attention.logosOff": "Write the changelog entry for RCP-142"}},
+  {"assert": {"attention.logosOff": "Review the receipts module"}},
+  {"assert": {"attention.logosOff": "Watch the nightly import"}},
+  {"assert": {"attention.logosOff": "Summarise the support thread"}},
+  {"assert": {"attention.logosOff": "RCP-142: receipt totals a cent off"}},
+  {"log": "a failure followed by work is no mark (2026-11-09): the receipts agent's two failed turns were each followed by a turn (the last now asks to edit a file), so it is listed only as asking; the Summarise subagent that failed, was resumed and finished is not listed either (its two retries were the harness's own). Read from the open list below"},
+  {"log": "the agent tree's head (the For you list and its tray were removed 2026-11-16): it counts the agents on the engine's list, orange while any asks; hovering it names the next; the list's order: the agents that ask you first (by urgency, then the longest wait), then the failed, finished and silent ones"},
+  {"hover": "tree-need", "after": 400},
+  {"assert": {"hover": "tree-need", "attention.head.drawn": true, "attention.head.colour": "orange"}},
+  {"assert": {"attention.listed.0": "*:asking", "attention.listed.1": "*:asking", "attention.listed.2": "*:asking", "attention.listed.3": "*:asking", "!attention.listed.4": "*:asking"}, "stop": true, "note": "the first four on the list are the four that ask, no other kind before them"},
+  {"assert": {"attention.listed": "Plan the RCP-142 release:asking", "!attention.listed": "Plan the RCP-142 release:finished"}, "note": "the Claude Code question is listed as asking, not as finished"},
+  {"assert": {"attention.listed": "Run the API tests in a clean venv:asking"}},
+  {"assert": {"attention.listed": "Write the changelog entry for RCP-142:asking"}},
+  {"assert": {"attention.listed": "Summarise the support thread:failed"}},
+  {"assert": {"attention.listed": "Review the receipts module:asking", "!attention.listed": "Review the receipts module:failed"}, "note": "the receipts agent's failures were each followed by work: it is listed as asking only"},
+  {"assert": {"!attention.listed": "Collect the support replies:*"}, "note": "the resumed Summarise subagent shows nothing"},
+  {"assert": {"attention.listed": "RCP-142: receipt totals a cent off:finished"}},
+  {"assert": {"attention.listed": "Open the PR for RCP-142:finished"}},
+  {"assert": {"attention.listed": "Watch the nightly import:stalled"}},
+  {"shot": "03-tree-head"},
+  {"log": "a click on the agent itself (its column, not its icon) clears what only tells you something, once: the finished column loses its mark (and any edge icon), it leaves the engine's list and its logo comes back; the tree's head drops by one (the mini-map steps need ?minimap=inline)"},
+  {"when": {"minimap.inline": true}, "then": [{"click": "minimap", "after": 1500}, {"assert": {"minimap.open": true, "minimap.attn.forYouOk": true, "has": "minimap-name-alert:RCP-142: receipt totals a cent off:finished"}, "note": "inline, the header says no count (the tree's head says it; forYouOk checks it is absent)"}, {"assert": {"has": "minimap-name-alert:Plan the RCP-142 release:question"}, "note": "the Claude Code question on its mini-map row"}, {"assert": {"minimap.progress.ringWithAlert": 0, "lacks": "minimap-progress:Plan the RCP-142 release"}, "note": "one key icon per row: the question stands in place of the plan's progress ring (2/4), never beside it; hover still says the plan"}]},
+  {"assert": {"attention.logosOff": "RCP-142: receipt totals a cent off", "attention.head.asking": 4}, "stop": true},
+  {
+   "click": "column:RCP-142: receipt totals a cent off",
+   "after": 1500
+  },
+  {"assert": {"focused": "RCP-142: receipt totals a cent off", "reply": "reply:RCP-142: receipt totals a cent off", "attention.head.asking": 4, "!attention.logosOff": "RCP-142: receipt totals a cent off", "!attention.logosDrawn": "RCP-142: receipt totals a cent off"}, "note": "its finished entry left the list and its logo is no longer held back for a mark; the four that ask stay. Its logo is not drawn while its own transcript panel is open (fdd3a50f2, 2026-11-15: no mark on a stack whose panel is open); it comes back when the panel closes (below)"},
+  {
+   "assert": {
+    "lacks": "attn-edge:RCP-142: receipt totals a cent off"
+   }
+  },
+  {"when": {"minimap.inline": true}, "then": [{"assert": {"minimap.attn.forYouOk": true, "minimap.attn.namesOk": true, "lacks": "minimap-name-alert:RCP-142: receipt totals a cent off:*"}}, {"shot": "03b-column-click-minimap"}, {"click": "minimap", "after": 800}, {"assert": {"minimap.open": false}}]},
+  {"assert": {"!attention.listed": "RCP-142: receipt totals a cent off:finished"}},
+  {"shot": "03c-column-click-tree"},
+  {
+   "key": "Escape",
+   "after": 400
+  },
+  {"assert": {"reply": null, "!attention.logosOff": "RCP-142: receipt totals a cent off", "attention.logosDrawn": "RCP-142: receipt totals a cent off"}, "note": "its panel closed: the column's logo is drawn again in its mark's place"},
+  {
+   "log": "one time: after a reload the read mark stays gone (kept in this browser's local storage, its key the answer's own time, so the next poll of the same answer does not bring it back)"
+  },
+  {
+   "reload": true
+  },
+  {"until": {"attention.head.n": true}, "timeout": 15000, "note": "something is on the engine's list (the tree's head counts agents)"},
+  {
+   "wait": 2500
+  },
+  {"when": {"panels.open": "providers"}, "then": [{"key": "Escape", "after": 300}], "note": "the mock has no provider ready, so the providers panel opens by itself on each load; a click outside a popup only closes it (2026-11-22), so it is closed first"},
+  {"assert": {"attention.head.asking": 4, "!attention.logosOff": "RCP-142: receipt totals a cent off"}},
+  {
+   "log": "what waits on you stays: a click on the column with a question leaves its entry and the count"
+  },
+  {
+   "click": "column:Write the changelog entry for RCP-142",
+   "after": 1500
+  },
+  {"assert": {"focused": "Write the changelog entry for RCP-142", "attention.head.asking": 4, "attention.logosOff": "Write the changelog entry for RCP-142"}},
+  {
+   "shot": "03d-question-stays"
+  },
+  {
+   "reload": true
+  },
+  {"until": {"attention.head.n": true}, "timeout": 15000, "note": "something is on the engine's list (the tree's head counts agents)"},
+  {
+   "wait": 1200
+  },
+  {"when": {"panels.open": "providers"}, "then": [{"key": "Escape", "after": 300}], "note": "the mock has no provider ready, so the providers panel opens by itself on each load; a click outside a popup only closes it (2026-11-22), so it is closed first"},
+  {
+   "log": "a failure you have not looked at (2026-11-09: the error mark means the agent's latest turn failed and you have not looked): the Summarise session's own failed turn and those of two of its subagents, left on their failures and folded into its row, so their marks stand on its column as one icon. Three ways to look, each clearing what it should and no more: its row in the list (its chat opens at the failed turn; its own mark only), a subagent's row in the mini-map (that subagent's only), and a click on the Summarise column (what still stands on it: the folded subagent's, the case above). Each stays gone after a reload and over the next two canvas polls"
+  },
+  {"click": "tree-row:Summarise the support thread:*", "after": 2500},
+  {"assert": {"focused": "Summarise the support thread", "attention.clicked.column": "Summarise the support thread", "attention.clicked.from": "column", "attention.clicked.left": 0}, "note": "its row in the tree: a click on the agent, as on its column (its transcript opens, not the chat window)"},
+  {"log": "its transcript opens from here, the cursor in its reply box"},
+  {
+   "shot": "04-click-6-error"
+  },
+  {
+   "key": "Escape",
+   "after": 400
+  },
+  {"assert": {"!attention.listed": "Summarise the support thread:failed"}, "note": "its own failure left the list"},
+  {
+   "reload": true
+  },
+  {"until": {"attention.head.n": true}, "timeout": 15000, "note": "something is on the engine's list (the tree's head counts agents)"},
+  {
+   "wait": 1200
+  },
+  {"when": {"panels.open": "providers"}, "then": [{"key": "Escape", "after": 300}], "note": "the mock has no provider ready, so the providers panel opens by itself on each load; a click outside a popup only closes it (2026-11-22), so it is closed first"},
+  {"assert": {"attention.head.asking": 4}},
+  {"assert": {"!attention.listed": "Summarise the support thread:failed"}, "note": "its own stays read after a reload"},
+  {"when": {"minimap.inline": true}, "then": [{"click": "minimap", "after": 1500}, {"if": "minimap-name-alert:Check the ticket history:error", "then": [{"click": "minimap-finished:Check the ticket history", "after": 1500}, {"assert": {"attention.clicked.column": "Check the ticket history", "attention.clicked.from": "row", "attention.clicked.left": 0, "lacks": "minimap-name-alert:Check the ticket history:error", "minimap.attn.forYouOk": true, "minimap.attn.namesOk": true}, "note": "a row clears its own agent's mark, not its parent's or a sibling's; the header's count follows the list"}, {"shot": "03e-minimap-row-click"}], "note": "only where the engine lists the folded subagent on its own (a subagent's failure its parent can take is not listed: the parent's count tells it)"}, {"click": "minimap", "after": 800}, {"reload": true}, {"until": {"attention.head.n": true}, "timeout": 15000, "note": "something is on the engine's list (the tree's head counts agents)"}, {"wait": 1200}]},
+  {"log": "the case this checks: a click on the column (here an inactive stub) whose mark holds a folded subagent's failure clears it, from the column, the mini-map and the count; where the engine lists no subagent separately the step is skipped (when its logo is not kept off by a stack)"},
+  {"when": {"attention.logosOff": "Summarise the support thread"}, "then": [{"click": "stub:Summarise the support thread", "after": 1500, "note": "inactive: its column is a grey stub, the same click target"}, {"assert": {"attention.clicked.column": "Summarise the support thread", "attention.clicked.from": "column", "attention.clicked.left": 0, "!attention.logosOff": "Summarise the support thread", "attention.head.asking": 4}}, {"wait": 21000, "note": "two canvas polls (every 10 s): the server reports the same failures again; they do not come back"}, {"assert": {"attention.clicked.left": 0, "!attention.logosOff": "Summarise the support thread"}}]},
+  {"reload": true},
+  {"until": {"attention.head.n": true}, "timeout": 15000, "note": "something is on the engine's list (the tree's head counts agents)"},
+  {
+   "wait": 1200
+  },
+  {"when": {"panels.open": "providers"}, "then": [{"key": "Escape", "after": 300}], "note": "the mock has no provider ready, so the providers panel opens by itself on each load; a click outside a popup only closes it (2026-11-22), so it is closed first"},
+  {"when": {"panels.open": "providers"}, "then": [{"key": "Escape", "after": 300}], "note": "the mock has no provider ready, so the providers panel opens by itself on each load; a click outside a popup only closes it (2026-11-22), so it is closed first"},
+  {"assert": {"!attention.logosOff": "Summarise the support thread", "attention.head.asking": 4}, "note": "after a reload too"},
+  {"log": "a click on the tree's head steps to the next agent that needs you: back to now, flies to it, its transcript open; first the rail is rewound a moment"},
+  {
+   "key": "ArrowLeft",
+   "after": 800
+  },
+  {
+   "assert": {
+    "!rail": "live"
+   }
+  },
+  {"click": "tree-need", "after": 2500},
+  {"assert": {"focused": true, "rail": "live", "attention.overlaps": 0, "attention.steps.steps.0.how": "click"}},
+  {
+   "shot": "04-click-1-approval"
+  },
+  {"log": "a waiting approval stays until it is answered, though its transcript has been open"},
+  {"assert": {"attention.head.asking": 4, "attention.logosOff": "Review the receipts module"}},
+  {"key": "Escape", "after": 400},
+  {
+   "reload": true
+  },
+  {"until": {"attention.head.n": true}, "timeout": 15000, "note": "something is on the engine's list (the tree's head counts agents)"},
+  {
+   "wait": 1200
+  },
+  {"when": {"panels.open": "providers"}, "then": [{"key": "Escape", "after": 300}], "note": "the mock has no provider ready, so the providers panel opens by itself on each load; a click outside a popup only closes it (2026-11-22), so it is closed first"},
+  {"click": "tree-row:Run the API tests in a clean venv:*", "after": 2500},
+  {"assert": {"focused": "Run the API tests in a clean venv", "rail": "live", "attention.overlaps": 0}},
+  {
+   "shot": "04-click-2-approval"
+  },
+  {
+   "key": "Escape",
+   "after": 400
+  },
+  {
+   "reload": true
+  },
+  {"until": {"attention.head.n": true}, "timeout": 15000, "note": "something is on the engine's list (the tree's head counts agents)"},
+  {
+   "wait": 1200
+  },
+  {"when": {"panels.open": "providers"}, "then": [{"key": "Escape", "after": 300}], "note": "the mock has no provider ready, so the providers panel opens by itself on each load; a click outside a popup only closes it (2026-11-22), so it is closed first"},
+  {"click": "tree-row:Write the changelog entry for RCP-142:*", "after": 2500},
+  {"assert": {"focused": "Write the changelog entry for RCP-142", "rail": "live", "attention.overlaps": 0}},
+  {
+   "shot": "04-click-3-question"
+  },
+  {
+   "key": "Escape",
+   "after": 400
+  },
+  {
+   "reload": true
+  },
+  {"until": {"attention.head.n": true}, "timeout": 15000, "note": "something is on the engine's list (the tree's head counts agents)"},
+  {
+   "wait": 1200
+  },
+  {"when": {"panels.open": "providers"}, "then": [{"key": "Escape", "after": 300}], "note": "the mock has no provider ready, so the providers panel opens by itself on each load; a click outside a popup only closes it (2026-11-22), so it is closed first"},
+  {"until": {"attention.logosOff": "Watch the nightly import"}, "timeout": 15000, "note": "after the reload its quiet clock is drawn once the column's history is read"},
+  {"click": "tree-row:Watch the nightly import:*", "after": 2500},
+  {"assert": {"focused": "Watch the nightly import", "rail": "live", "attention.overlaps": 0}},
+  {
+   "shot": "04-click-5-stalled"
+  },
+  {"assert": {"!attention.logosOff": "Watch the nightly import"}, "note": "the click on the agent cleared its quiet clock"},
+  {"log": "the stalled column's transcript panel (since 2026-11-22 it opens at one fixed place, against the window's right edge under the top-right icons) may cover another column's top: that column's entry then shows as a mark with an arrow at the panel's edge. On this mock the receipts column's top stands 14 px above the panel, so no column is behind it and the next steps are skipped (they run if the layout ever puts a column's top behind the panel); the edge mark's own clicks stay checked after the zoom below"},
+  {"if": "attn-edge:Review the receipts module", "then": [
+   {"assert": {"attention.edgeBehind": true, "attention.overlaps": 0}},
+   {"hover": "attn-edge:Review the receipts module", "after": 500},
+   {"assert": {"attention.said": true, "attention.tip": true}},
+   {"shot": "05-edge-behind-hover"},
+   {"click": "attn-edge:Review the receipts module", "after": 2500},
+   {"assert": {"reply": "reply:Review the receipts module", "focused": "Review the receipts module"}},
+   {"shot": "06-edge-click"}
+  ]},
+  {
+   "key": "Escape",
+   "after": 1200,
+   "note": "closing the transcript flies the camera back to where it stood before the agent was opened (2026-11-22), here the fitted floor"
+  },
+  {"log": "the chat closed, the camera back at the fitted floor, and the wheel zooms in over the view's centre: the columns now off screen show at the view's edge, one mark each (the first of its agents, +N the others)"},
+  {
+   "wheel": -500,
+   "after": 1500
+  },
+  {
+   "assert": {
+    "attention.edgeOff": true,
+    "attention.overlaps": 0
+   }
+  },
+  {
+   "shot": "06b-edge-offscreen"
+  },
+  {
+   "reload": true
+  },
+  {"until": {"attention.head.n": true}, "timeout": 15000, "note": "something is on the engine's list (the tree's head counts agents)"},
+  {
+   "wait": 1200
+  },
+  {"when": {"panels.open": "providers"}, "then": [{"key": "Escape", "after": 300}], "note": "the mock has no provider ready, so the providers panel opens by itself on each load; a click outside a popup only closes it (2026-11-22), so it is closed first"},
+  {"log": "answering on the agent's card (the list's answer buttons went with it). The floor shows one card at a time, the oldest, and none for the agent whose transcript is open (its question stands in the transcript, whose buttons have no hit names), so each card is reached by opening another asking agent's transcript through its tree row: the approval's card (older) by Allow once, then (the receipts approval's card, the next oldest, folded away unanswered) the question's card by its option; both leave the list and the head's count"},
+  {"click": "tree-row:Write the changelog entry for RCP-142:*", "after": 1500},
+  {"assert": {"attention.head.asking": 4}},
+  {"click": "card-allow:Run the API tests in a clean venv:*", "after": 2500},
+  {"assert": {"attention.head.asking": 3, "!attention.listed": "Run the API tests in a clean venv:asking", "focused": "Write the changelog entry for RCP-142", "transcript.id": "Write the changelog entry for RCP-142"}, "note": "card follow-up (planner 2026-11-18): an answer on a floor card stays on the floor: the transcript that was open stays, no other opens"},
+  {"click": "tree-row:Plan the RCP-142 release:*", "after": 1500},
+  {"hover": "column:Review the receipts module", "reveal": true, "after": 800, "note": "the floor's card is the oldest open request among the agents whose stack is in view (cardAsk); with the conversation window at its 2026-11-22 place the camera following Plan the RCP-142 release leaves the receipts column off screen, so the floor is dragged until it is in view: its approval, older than the changelog's question, then owns the card"},
+  {"assert": {"has": "card-fold:Review the receipts module:*", "lacks": "card-option:Write the changelog entry for RCP-142:*"}, "stop": true},
+  {"click": "card-fold:Review the receipts module:*", "after": 800, "reveal": true},
+  {"assert": {"lacks": "card-fold:Review the receipts module:*", "attention.listed": "Review the receipts module:asking", "attention.head.asking": 3}, "note": "folded unanswered: its card is gone, the agent still asks (list and head unchanged); the changelog's card shows next"},
+  {"click": "card-option:Write the changelog entry for RCP-142:*", "after": 2500, "reveal": true},
+  {"assert": {"attention.head.asking": 2, "!attention.listed": "Write the changelog entry for RCP-142:asking", "attention.head.colour": "orange", "focused": "Plan the RCP-142 release", "transcript.id": "Plan the RCP-142 release"}},
+  {
+   "shot": "07-answered"
+  },
+  {
+   "key": "Escape",
+   "after": 400
+  },
+  {
+   "reload": true
+  },
+  {"until": {"attention.head.n": true}, "timeout": 15000, "note": "something is on the engine's list (the tree's head counts agents)"},
+  {
+   "wait": 1200
+  },
+  {"when": {"panels.open": "providers"}, "then": [{"key": "Escape", "after": 300}], "note": "the mock has no provider ready, so the providers panel opens by itself on each load; a click outside a popup only closes it (2026-11-22), so it is closed first"},
+  {"log": "stepping reads what only tells you something (mark all read went with the list): six steps from the tree's head visit the two that ask and read every failure, finish and quiet clock; the list then holds only the agents that ask you, orange: the receipts approval and the Claude Code question; every column whose entry is gone has its logo back"},
+  {"click": "tree-need", "after": 1500},
+  {"click": "tree-need", "after": 1500},
+  {"click": "tree-need", "after": 1500},
+  {"click": "tree-need", "after": 1500},
+  {"click": "tree-need", "after": 1500},
+  {"click": "tree-need", "after": 1500},
+  {"assert": {"attention.head.n": 2, "attention.head.asking": 2, "attention.head.rest": 0, "attention.head.colour": "orange", "attention.listed": "Review the receipts module:asking"}},
+  {
+   "shot": "09-all-read"
+  },
+  {
+   "assert": {
+    "attention.logosOff": "Review the receipts module",
+    "!attention.logosOff": "Open the PR for RCP-142"
+   }
+  },
+  {
+   "assert": {
+    "!attention.logosOff": "Watch the nightly import"
+   },
+   "note": "its quiet clock was cleared by the click on it above"
+  },
+  {
+   "assert": {
+    "!attention.logosOff": "RCP-142: receipt totals a cent off"
+   }
+  },
+  {
+   "assert": {
+    "!attention.logosOff": "Summarise the support thread"
+   }
+  },
+  {
+   "assert": {
+    "!attention.logosOff": "Run the API tests in a clean venv"
+   }
+  },
+  {
+   "assert": {
+    "!attention.logosOff": "Write the changelog entry for RCP-142"
+   }
+  },
+  {"assert": {"attention.overlaps": 0, "attention.logosOff": "Plan the RCP-142 release"}},
+  {
+   "shot": "10-floor-after"
+  },
+  {
+   "log": "a hand-back: the Claude Code session's background subagent reports back (the mock appends the task notification to its transcript). It does not wait on you: no item, no count, no row; a short pulse from the child up to its parent as it happens, gone a few seconds later"
+  },
+  {"hover": "tree-need", "after": 200},
+  {"assert": {"attention.head.n": 2, "lacks": "attn-pulse:*"}},
+  {
+   "mock": "handback"
+  },
+  {
+   "waitFor": "attn-pulse:Check the release notes",
+   "timeout": 15000,
+   "note": "the canvas poll (every 10 s) brings the hand-back"
+  },
+  {"assert": {"attention.pulses": "Check the release notes>Plan the RCP-142 release", "attention.head.n": 2, "attention.head.asking": 2}},
+  {
+   "shot": "11-handback-pulse"
+  },
+  {
+   "wait": 3500
+  },
+  {"assert": {"attention.pulses": [], "lacks": "attn-pulse:*", "attention.head.n": 2, "attention.head.rest": 0}, "note": "gone; nothing left on the parent and nothing counted"},
+  {
+   "assert": {
+    "lacks": "flag:Plan the RCP-142 release"
+   },
+   "note": "no hand-back flag on the parent"
+  },
+  {
+   "shot": "12-handback-gone"
+  },
+  {"log": "no transcript open when the answer arrives (round 3: an attended silent agent stays attended across reloads, so the step round above can end on this agent with its transcript open, and an answer arriving in an open transcript in front of you is read as it arrives)"},
+  {"key": "Escape", "after": 400},
+  {"log": "the Claude Code question answered in Claude Code (the mock appends the tool result and the answer after it): gone from its column, the mini-map and the tree's head at the next poll"},
+  {
+   "mock": "answer",
+   "after": 4500
+  },
+  {"assert": {"attention.head.asking": 1}},
+  {
+   "when": {
+    "minimap.inline": true
+   },
+   "then": [
+    {
+     "click": "minimap",
+     "after": 1500
+    },
+    {
+     "assert": {
+      "minimap.open": true,
+      "lacks": "minimap-name-alert:Plan the RCP-142 release:question",
+      "minimap.progress.ringWithAlert": 0
+     }
+    },
+    {
+     "click": "minimap",
+     "after": 800
+    }
+   ]
+  },
+  {"assert": {"!attention.listed": "Plan the RCP-142 release:asking"}},
+  {
+   "shot": "13-claude-answered"
+  },
+  {
+   "key": "Escape",
+   "after": 400
+  },
+  {
+   "log": "the finished mark means the agent has returned and you have not looked (2026-11-09): it comes when a turn ends, goes when the agent works again from anywhere (here the Claude app, through the mock's registration: busy, then idle) and comes back when that turn ends; a second answer replaces the first, never two marks on one column"
+  },
+  {"until": {"attention.logosOff": "Plan the RCP-142 release"}, "timeout": 15000},
+  {
+   "when": {
+    "minimap.inline": true
+   },
+   "then": [
+    {
+     "click": "minimap",
+     "after": 1500
+    },
+    {
+     "assert": {
+      "has": "minimap-name-alert:Plan the RCP-142 release:finished"
+     }
+    },
+    {
+     "click": "minimap",
+     "after": 800
+    }
+   ]
+  },
+  {
+   "mock": "held",
+   "after": 4500,
+   "note": "the Claude app opens the session (idle): nothing changes"
+  },
+  {"assert": {"attention.logosOff": "Plan the RCP-142 release", "attention.head.rest": 1}},
+  {
+   "mock": "busy",
+   "after": 4500,
+   "note": "a turn begun in the Claude app: the registration says busy (the state poll every 3 s)"
+  },
+  {"assert": {"!attention.logosOff": "Plan the RCP-142 release", "attention.head.rest": 0}},
+  {
+   "when": {
+    "minimap.inline": true
+   },
+   "then": [
+    {
+     "click": "minimap",
+     "after": 1500
+    },
+    {
+     "assert": {
+      "minimap.running": "Plan the RCP-142 release",
+      "lacks": "minimap-name-alert:Plan the RCP-142 release:*"
+     }
+    },
+    {
+     "click": "minimap",
+     "after": 800
+    }
+   ]
+  },
+  {
+   "shot": "14-working-again-no-mark"
+  },
+  {
+   "mock": "followup",
+   "note": "the turn's message and its answer land in the transcript"
+  },
+  {
+   "mock": "idle",
+   "note": "and the turn ends"
+  },
+  {"until": {"attention.logosOff": "Plan the RCP-142 release"}, "timeout": 15000, "note": "the canvas poll (every 10 s) brings the new answer"},
+  {"assert": {"attention.head.rest": 1, "attention.overlaps": 0}},
+  {
+   "shot": "15-turn-ended-mark-back"
+  },
+  {
+   "log": "no flip: a turn begun with the registration still idle (the case of a session waiting on a long tool call, a compaction or its subagents) keeps the agent running on the floor and in the mini-map, and its mark gone, until its answer is written"
+  },
+  {
+   "mock": "restart",
+   "after": 4500,
+   "note": "only the person's message: no answer yet"
+  },
+  {"assert": {"!attention.logosOff": "Plan the RCP-142 release", "attention.head.rest": 0}},
+  {
+   "when": {
+    "minimap.inline": true
+   },
+   "then": [
+    {
+     "click": "minimap",
+     "after": 1500
+    },
+    {
+     "assert": {
+      "minimap.running": "Plan the RCP-142 release",
+      "!minimap.finished.listed": "Plan the RCP-142 release"
+     }
+    },
+    {
+     "wait": 8000
+    },
+    {
+     "assert": {
+      "minimap.running": "Plan the RCP-142 release",
+      "!minimap.finished.listed": "Plan the RCP-142 release"
+     },
+     "note": "still running after more polls: it did not drop into the finished list"
+    },
+    {
+     "click": "minimap",
+     "after": 800
+    }
+   ]
+  },
+  {"assert": {"!attention.logosOff": "Plan the RCP-142 release"}},
+  {
+   "mock": "restart-done",
+   "note": "its answer: the turn ended"
+  },
+  {"until": {"attention.logosOff": "Plan the RCP-142 release"}, "timeout": 15000},
+  {
+   "when": {
+    "minimap.inline": true
+   },
+   "then": [
+    {
+     "click": "minimap",
+     "after": 1500
+    },
+    {
+     "assert": {
+      "minimap.finished.listed": "Plan the RCP-142 release",
+      "!minimap.running": "Plan the RCP-142 release",
+      "has": "minimap-name-alert:Plan the RCP-142 release:finished"
+     }
+    },
+    {
+     "shot": "16-minimap-finished"
+    },
+    {
+     "click": "minimap",
+     "after": 800
+    }
+   ]
+  },
+  {
+   "log": "the held session's transcript: before anything is typed a quiet line says the Claude app holds it and that a message here starts a copy; the send button reads 'send as copy'; a send asks first (the choice card); Cancel leaves the message; once the app lets it go the line goes and the button reads 'send'"
+  },
+  {"click": "tree-row:Plan the RCP-142 release:*", "after": 2500, "note": "its transcript opens, the cursor in its reply box"},
+  {"assert": {"reply": "reply:Plan the RCP-142 release", "heldLine": "Open in the Claude app · a message here starts a copy*", "sendLabel": "send as copy", "!attention.logosOff": "Plan the RCP-142 release"}},
+  {
+   "shot": "17-held-transcript"
+  },
+  {
+   "click": "reply:*",
+   "after": 200
+  },
+  {
+   "type": "check the 1.4.0 receipts too"
+  },
+  {
+   "click": "reply-send",
+   "after": 2000
+  },
+  {
+   "assert": {
+    "choice.heldBy": "app",
+    "choice.where": "reply",
+    "choiceWords": "This chat is open in the Claude app*",
+    "heldLine": "Open in the Claude app*"
+   }
+  },
+  {
+   "shot": "18-held-choice"
+  },
+  {
+   "click": "choice:cancel",
+   "after": 500
+  },
+  {
+   "assert": {
+    "choice": null,
+    "replyText": "check the 1.4.0 receipts too"
+   }
+  },
+  {
+   "mock": "released",
+   "after": 4500,
+   "note": "the app lets it go: a send would resume it in place"
+  },
+  {
+   "assert": {
+    "heldLine": null,
+    "sendLabel": "send"
+   }
+  },
+  {
+   "shot": "19-released-transcript"
+  },
+  {
+   "log": "a copy, once made, is its own column: named 'copy of …', a branch of the original (its parent), with no hand-back pulse or subagent fold (the mock's stand-in for Claude Code starts nothing: the copy is listed, never written)"
+  },
+  {
+   "mock": "held",
+   "after": 4500
+  },
+  {
+   "assert": {
+    "heldLine": "Open in the Claude app*",
+    "sendLabel": "send as copy"
+   }
+  },
+  {
+   "click": "reply-send",
+   "after": 2000
+  },
+  {
+   "assert": {
+    "choice.heldBy": "app"
+   }
+  },
+  {
+   "click": "choice:copy",
+   "after": 5000
+  },
+  {
+   "assert": {
+    "has": "column:copy of Plan the RCP-142 release*"
+   }
+  },
+  {
+   "shot": "20-copy-on-floor"
+  },
+  {
+   "key": "Escape",
+   "after": 400
+  },
+  {
+   "shot": "21-copy-floor-closed"
+  }
+]
+}

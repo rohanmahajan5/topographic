@@ -1,0 +1,27 @@
+/* The Topographic wordmark (2026-11-21; lowercase "topographic" and the logo beside it, 2026-11-22): "topo" in
+   pure black, "graphic" in a gradient from red through orange to yellow, in a typeface of its own carried with the app (no
+   network). Used by the page's title band in the app (live.html, the app-only block) and the app's start screen
+   (agent-ide/app/start.html). This file is the one place the word's colours are written; the pages only link it (the logo's
+   colours are in its inline SVG, from brand/logo-draft/make.py). The typeface and its licence: ATTRIBUTION.md beside this file. */
+@font-face {
+  font-family: 'Topographic Wordmark';
+  src: url('Overpass.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
+.wordmark {
+  font-family: 'Topographic Wordmark', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-weight: 650; letter-spacing: .01em; white-space: nowrap; font-kerning: normal;
+}
+.wordmark .topo { color: #000; }
+/* the stops (2026-11-22; the dark gold of 11-21 read brown): a bright red, a vibrant orange in the middle, a bright yellow.
+   The yellow is low-contrast on the off-white page by nature; it is kept truly yellow on purpose. */
+.wordmark .graphic {
+  background-image: linear-gradient(90deg, #ff2a1a 0%, #ff7a00 50%, #ffc800 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
+}
+/* the logo beside the word (2026-11-22), large enough for its dots to come through rather than reading as solid borders: the DOTTED mark, carried inline by each page as <svg class="mark">
+   inside .wordmark, to the left of the word (written into both pages by brand/logo-draft/make.py). Its height is --mark-h, which
+   each page sets so the dots read (40 px and up at 1x); it sits centred on the letters. */
+.wordmark .mark { display: inline-block; height: var(--mark-h, 1.02em); width: auto; vertical-align: middle; margin-right: .3em; overflow: visible; position: relative; top: -0.06em; }

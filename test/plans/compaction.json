@@ -1,0 +1,29 @@
+{
+  "about": "The columns' context scale and compaction points on whatever floor the server opens; sends nothing. Every column stands on one shared tokens-to-height scale (2026-11-09: one scale shared by all, the box drawn only on the focused column; linear to 250k, logarithmic above), so columns whose harness compacts at the same point (Codex: 90% of the model window; Claude Code: its auto-compact window less 33k; compact_points.py) have their points at the same height and a later point stands higher. The dotted box is drawn on the focused column only; it ends at that column's point, labelled in tokens ('367k'), with the universal ticks (100k, 200k, 500k, 1M) up to it; a label that would cover a name, a readout or a trace label is left out (the ghost's tip still says the point), and none overlaps another. The rim is amber from 80% of the point and burnt orange from 95%, box or not, and an unfocused hot column has its level ('97%') beside it. Checked at the fitted view, with a column focused, after a wheel zoom, and with a hot column when the floor has one: the server started with AGENT_IDE_TEST_PROVIDERS=codex,claude,fake adds the fake harness's running session at 97% of its 100k point; on a floor with no hot column those steps are skipped and logged.",
+  "actions": [
+    {"waitFor": "column:", "timeout": 20000},
+    {"wait": 2500, "note": "the git tree's first answer refits the camera (it moves only when a branch floor is on: the fit is the floor map, not the lanes, since 2026-11-22); the floor settles before anything is read"},
+    {"until": {"compaction.known": true}, "timeout": 15000},
+    {"assert": {"compaction.known": true, "compaction.heightsByPoint": true, "compaction.bodyWithin": true, "!compaction.boxes": true, "compaction.hotRimOk": true, "compaction.labelOverlap": false}, "stop": true, "note": "nothing focused: no column draws its box (2026-11-09); the same point is the same height on every column"},
+    {"shot": "01-fitted"},
+    {"log": "a hot column: its rim amber or burnt orange, its level beside it (only where the floor has one)"},
+    {"when": {"!compaction.hot": true}, "then": [{"log": "no column at 80% of its point on this floor: the hot steps are skipped"}]},
+    {"when": {"compaction.hot": true}, "then": [{"assert": {"compaction.hotRimOk": true, "compaction.labelOverlap": false}}, {"shot": "02-hot"}]},
+    {"log": "a column with a point focused: its box alone is drawn, to its point, labelled; its readout says 'of <point> · N%'"},
+    {"click": "column:*", "save": "c", "after": 1200},
+    {"assert": {"focused": "$c.id", "compaction.focusedBox": true, "compaction.heightsByPoint": true, "compaction.topDrawn": true, "compaction.topLabelsMatch": true, "compaction.tickLabelsMatch": true, "compaction.hotRimOk": true, "compaction.labelOverlap": false}},
+    {"log": "the box's tip says the point and the rule"},
+    {"hover": "ghost:$c.id", "reaim": 2, "after": 400},
+    {"assert": {"compaction.tip": "compacts at *"}},
+    {"hover": "readout:$c.id", "reaim": 2, "after": 400},
+    {"assert": {"compaction.tip": "compacts at *"}},
+    {"shot": "03-focused"},
+    {"key": "Escape", "after": 600},
+    {"reload": true},
+    {"until": {"compaction.known": true}, "timeout": 15000},
+    {"log": "zoomed in by the wheel: the same heights for the same points, the same numbers"},
+    {"wheel": -150, "at": "column:$c.id", "reveal": true, "after": 900},
+    {"assert": {"compaction.heightsByPoint": true, "compaction.topLabelsMatch": true, "compaction.tickLabelsMatch": true, "compaction.hotRimOk": true, "compaction.labelOverlap": false}},
+    {"shot": "04-zoomed"}
+  ]
+}

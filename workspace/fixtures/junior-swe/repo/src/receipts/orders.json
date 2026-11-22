@@ -1,0 +1,6 @@
+{
+  "ord-1001": {"currency": "EUR", "customer_currency": "EUR", "tax_rate": "0.20",
+               "lines": [{"sku": "mug", "qty": 2, "price": "7.99"}, {"sku": "tee", "qty": 1, "price": "19.00"}]},
+  "ord-1002": {"currency": "EUR", "customer_currency": "GBP", "tax_rate": "0.20",
+               "lines": [{"sku": "mug", "qty": 3, "price": "7.99"}, {"sku": "cap", "qty": 1, "price": "11.45"}]}
+}
